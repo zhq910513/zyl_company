@@ -24,9 +24,12 @@ def parse_detail(product_info, html):
     if product_info['domain'] == 'www.jmjj.com':
         try:
             try:
-                pro_desc = soup.find('div', {'class': 'mb-60'}).get_text().replace('\n', '').replace('\t', '').replace(
-                    '\r',
-                    '').strip()
+                series = product_info['cate_2_name']
+            except:
+                series = None
+
+            try:
+                pro_desc = soup.find('div', {'class': 'mb-60'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
             except:
                 pro_desc = None
 
@@ -38,7 +41,7 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'mb-60'})) + '\n' + str(soup.find('div', {'class': 'container'}))
+                pro_jscs_html = str(soup.find('section', {'class': 'mt-90 mb-90'})) + '\n' + str(soup.find('section', {'class': 'mt-90 pb-45 pt-90 bg-lightgray'}))
             except:
                 pro_jscs_html = None
 
@@ -50,17 +53,7 @@ def parse_detail(product_info, html):
                     try:
                         img_url = img.get('src')
                         if not isinstance(img_url, str): continue
-                        new_img_url = format_img_url(product_info, img_url)
-                        if new_img_url and new_img_url not in pro_images_front:
-                            replace_list.append(img_url)
-                            pro_images_front.append(new_img_url)
-                    except:
-                        pass
 
-                for img in soup.find('section', {'class': 'mt-90 mb-90'}).find_all('img'):
-                    try:
-                        img_url = img.get('src')
-                        if not isinstance(img_url, str): continue
                         new_img_url = format_img_url(product_info, img_url)
                         if new_img_url and new_img_url not in pro_images_front:
                             replace_list.append(img_url)
@@ -87,8 +80,9 @@ def parse_detail(product_info, html):
 
             _data = {
                 'pro_link': product_info['pro_link'],
-                'pro_yyly': pro_yyly,
+                'series': series,
                 'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': '/'.join(pro_images_back),
@@ -99,11 +93,20 @@ def parse_detail(product_info, html):
             log_err(error)
     if product_info['domain'] == "www.njkwls.com":
         try:
-            pro_desc = None
-            pro_detail = None
-            if pro_desc:
-                pro_detail = '\n'.join([pro_desc, pro_detail])
-            pro_yyly = None
+            try:
+                series = product_info['cate_2_name']
+            except:
+                series = None
+
+            try:
+                pro_desc = None
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
 
             try:
                 pro_jscs_html = str(soup.find('div', {'class': 'info_right'}))
@@ -142,8 +145,9 @@ def parse_detail(product_info, html):
 
             _data = {
                 'pro_link': product_info['pro_link'],
+                'series': series,
+                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
-                'pro_desc': pro_detail,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': '/'.join(pro_images_back),

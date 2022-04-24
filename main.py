@@ -7,6 +7,8 @@
 @file: main.py
 @time: 2022/4/21 14:17
 """
+import os
+from os import path
 
 import requests
 
@@ -58,7 +60,6 @@ videoUploadHeaders = {
 }
 serverUrl = 'https://zuiyouliao-prod.oss-cn-beijing.aliyuncs.com/zx/image/'
 pic_info = {'id': 0, 'pic_type': 3}
-image_base_path = 'D:/BaiduNetdiskDownload/zyl_company/download_data'
 
 import pprint
 
@@ -116,6 +117,6 @@ if __name__ == "__main__":
     }
     # product_list(ci)
 
-    for pi in MongoPipeline("products").find({"domain": "www.jmjj.com"}):
+    for pi in MongoPipeline("products").find({"domain": "www.jmjj.com"}).skip(1):
         product_detail(pi)
-        break
+        # break

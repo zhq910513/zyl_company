@@ -9,11 +9,13 @@
 """
 import hashlib
 import os
+from os import path
 from multiprocessing.pool import ThreadPool
 
 import requests
 
 from common.log_out import log_err, log
+# from main import image_base_path
 
 requests.packages.urllib3.disable_warnings()
 
@@ -58,7 +60,8 @@ videoUploadHeaders = {
 }
 serverUrl = 'https://zuiyouliao-prod.oss-cn-beijing.aliyuncs.com/zx/image/'
 pic_info = {'id': 0, 'pic_type': 3}
-image_base_path = 'D:/BaiduNetdiskDownload/zyl_company/download_data'
+image_base_path = path.dirname(os.path.abspath(path.dirname(__file__)))
+
 
 import pprint
 
@@ -80,13 +83,12 @@ def DownloadPicture_Video(img_path, img_url, retry=0):
                     f.write(content)
 
                 # upload picture
-                uploadUrl = 'http://27.150.182.135:8855/api/common/upload?composeId={0}&type={1}&isNameReal=0'.format(
-                    pic_info['id'], pic_info['pic_type'])
+                # uploadUrl = 'https://zshqadmin.zuiyouliao.com/api/information/common/upload?type=2&isNameReal=1'
+                uploadUrl = 'http://27.150.182.135:8855/api/common/upload?composeId={0}&type={1}&isNameReal=0'.format(pic_info['id'], pic_info['pic_type'])
 
                 files = {
                     'file': (basename, open(filename, 'rb'), 'image/jpg')
                 }
-
                 picHeaders.update({
                     'Content-Length': str(os.path.getsize(filename))
                 })
@@ -126,7 +128,7 @@ def command_thread(company_name, image_list, Async=True):
     pool = ThreadPool(processes=8)
 
     for img_url in image_list:
-        file_path = image_base_path + f'/{company_name}'
+        file_path = os.path.abspath(image_base_path + f'/download_data/{company_name}')
         if not os.path.exists(file_path):
             os.makedirs(file_path)
 
@@ -143,13 +145,12 @@ def command_thread(company_name, image_list, Async=True):
 # 格式化图片链接
 def format_img_url(product_info, img_url):
     try:
-        if 'http:' not in img_url and 'https' not in img_url:
-            if f'http://{product_info["domain"]}' not in img_url:
-                img_url = f'http://{product_info["domain"]}' + img_url
-            elif f'https://{product_info["domain"]}' not in img_url:
-                img_url = f'https://{product_info["domain"]}' + img_url
+        scheme = product_info['pro_link'].split('//')[0]
+        if 'http' not in img_url and 'https' not in img_url:
+            if str(img_url).startswith('//'):
+                img_url = scheme + img_url
             else:
-                pass
+                img_url = scheme + f"/{product_info['domain']}" + f"/{img_url}"
         return img_url
     except:
         return None
