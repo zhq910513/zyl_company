@@ -9,13 +9,12 @@
 """
 import hashlib
 import os
-from os import path
 from multiprocessing.pool import ThreadPool
+from os import path
 
 import requests
 
 from common.log_out import log_err, log
-# from main import image_base_path
 
 requests.packages.urllib3.disable_warnings()
 
@@ -62,7 +61,6 @@ serverUrl = 'https://zuiyouliao-prod.oss-cn-beijing.aliyuncs.com/zx/image/'
 pic_info = {'id': 0, 'pic_type': 3}
 image_base_path = path.dirname(os.path.abspath(path.dirname(__file__)))
 
-
 import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -84,7 +82,8 @@ def DownloadPicture_Video(img_path, img_url, retry=0):
 
                 # upload picture
                 # uploadUrl = 'https://zshqadmin.zuiyouliao.com/api/information/common/upload?type=2&isNameReal=1'
-                uploadUrl = 'http://27.150.182.135:8855/api/common/upload?composeId={0}&type={1}&isNameReal=0'.format(pic_info['id'], pic_info['pic_type'])
+                uploadUrl = 'http://27.150.182.135:8855/api/common/upload?composeId={0}&type={1}&isNameReal=0'.format(
+                    pic_info['id'], pic_info['pic_type'])
 
                 files = {
                     'file': (basename, open(filename, 'rb'), 'image/jpg')
@@ -147,10 +146,23 @@ def format_img_url(product_info, img_url):
     try:
         scheme = product_info['pro_link'].split('//')[0]
         if 'http' not in img_url and 'https' not in img_url:
+            # //www.njkwls.com/ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
             if str(img_url).startswith('//'):
                 img_url = scheme + img_url
+            elif str(img_url).startswith('/'):
+                # /ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
+                if product_info['domain'] not in img_url:
+                    img_url = scheme + f"//{product_info['domain']}" + f"{img_url}"
+                # /www.njkwls.com/ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
+                else:
+                    img_url = f"{scheme}/" + img_url
             else:
-                img_url = scheme + f"/{product_info['domain']}" + f"/{img_url}"
+                # ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
+                if product_info['domain'] not in img_url:
+                    img_url = scheme + f"//{product_info['domain']}" + f"/{img_url}"
+                # www.njkwls.com/ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
+                else:
+                    img_url = f"{scheme}//" + img_url
         return img_url
     except:
         return None

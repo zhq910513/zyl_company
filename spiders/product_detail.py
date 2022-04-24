@@ -8,13 +8,13 @@
 @time: 2022/4/21 14:17
 """
 import hashlib
+import pprint
 
 from bs4 import BeautifulSoup
 
 from common.log_out import log_err
 from spiders.image_download import command_thread, format_img_url, serverUrl
 
-import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -29,7 +29,8 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'mb-60'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+                pro_desc = soup.find('div', {'class': 'mb-60'}).get_text().replace('\n', '').replace('\t', '').replace(
+                    '\r', '').strip()
             except:
                 pro_desc = None
 
@@ -41,7 +42,8 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('section', {'class': 'mt-90 mb-90'})) + '\n' + str(soup.find('section', {'class': 'mt-90 pb-45 pt-90 bg-lightgray'}))
+                pro_jscs_html = str(soup.find('section', {'class': 'mt-90 mb-90'})) + '\n' + str(
+                    soup.find('section', {'class': 'mt-90 pb-45 pt-90 bg-lightgray'}))
             except:
                 pro_jscs_html = None
 
@@ -94,12 +96,16 @@ def parse_detail(product_info, html):
     if product_info['domain'] == "www.njkwls.com":
         try:
             try:
-                series = product_info['cate_2_name']
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                else:
+                    series = None
             except:
                 series = None
 
             try:
-                pro_desc = None
+                pro_desc = soup.find('div', {'class': 'p_content'}).get_text().replace('\n', '').replace('\t', '').replace(
+                    '\r', '').strip()
             except:
                 pro_desc = None
 
