@@ -100,11 +100,11 @@ def DownloadPicture_Video(img_path, img_url, retry=0):
                     else:
                         log_err(resp.json())
                 except requests.exceptions.ConnectionError:
-                    log('服务器上传图片网络问题，重试中...')
+                    log(f'服务器上传图片网络问题，重试中...{img_url}')
                     if retry < 3:
                         return DownloadPicture_Video(img_path, img_url, retry + 1)
                     else:
-                        log_err(f'服务器上传图片网络问题，重试中...   {img_url}')
+                        log_err(f'超过三次 服务器上传图片网络问题  {img_url}')
                 except Exception as error:
                     log_err(error)
                     log_err(uploadUrl)

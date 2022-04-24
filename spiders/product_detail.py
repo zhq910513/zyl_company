@@ -269,7 +269,10 @@ def parse_detail(product_info, html):
             except:
                 pro_desc = None
 
-            pro_yyly = None
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
 
             try:
                 pro_jscs_html = str(soup.find('div', {'class': 'jyms'})) + '\n' + str(soup.find('div', {'class': 'pro_xxjs'}))
@@ -324,22 +327,31 @@ def parse_detail(product_info, html):
             log_err(error)
     if product_info['domain'] == 'tielong437.51pla.com':
         try:
-            pro_desc = None
-
-            pro_yyly = None
+            try:
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
 
             try:
-                pro_detail = soup.find('meta', {'name': 'description'}).get('content').replace('\n', '').replace('\t',
+                pro_desc = soup.find('meta', {'name': 'description'}).get('content').replace('\n', '').replace('\t',
                                                                                                                  '').replace(
                     '\r',
                     '').strip()
-                if pro_desc:
-                    pro_detail = '\n'.join([pro_desc, pro_detail])
             except:
-                pro_detail = None
+                pro_desc = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'product-info'}))
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'product-info'})) + '\n' + str(soup.find('div', {'class': 'details'}))
             except:
                 pro_jscs_html = None
 
@@ -378,8 +390,9 @@ def parse_detail(product_info, html):
 
             _data = {
                 'pro_link': product_info['pro_link'],
+                'series': series,
+                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
-                'pro_desc': pro_detail,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': '/'.join(pro_images_back),
