@@ -117,6 +117,6 @@ if __name__ == "__main__":
     }
     # product_list(ci)
 
-    for pi in MongoPipeline("products").find({"domain": "www.jmjj.com"}):
+    for pi in MongoPipeline("products").find({"domain": "www.syntop-ien.com"}):
         product_detail(pi)
-        # break
+        break

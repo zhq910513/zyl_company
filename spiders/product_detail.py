@@ -24,7 +24,12 @@ def parse_detail(product_info, html):
     if product_info['domain'] == 'www.jmjj.com':
         try:
             try:
-                series = product_info['cate_2_name']
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
             except:
                 series = None
 
@@ -98,6 +103,8 @@ def parse_detail(product_info, html):
             try:
                 if '系列' in product_info['cate_1_name']:
                     series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
                 else:
                     series = None
             except:
@@ -164,29 +171,28 @@ def parse_detail(product_info, html):
             log_err(error)
     if product_info['domain'] == 'www.gdhuaxing.com':
         try:
-            pro_desc = None
-
-            pro_yyly = None
-
             try:
-                pro_detail = []
-                for det in soup.find_all('div', {'class': 'nbcqcsb_slideitem'}):
-                    for p in det.find_all('p'):
-                        try:
-                            pro_detail.append(p.get_text().replace('\n', '').replace('\t', '').replace(
-                                '\r',
-                                '').strip())
-                        except:
-                            pass
-                if pro_detail:
-                    pro_detail = '\n'.join(pro_detail)
-                if pro_desc:
-                    pro_detail = '\n'.join([pro_desc, pro_detail])
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
             except:
-                pro_detail = None
+                series = None
 
             try:
-                pro_jscs_html = str(soup.find('body'))
+                pro_desc = None
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'row nbcqcsbox'}))
             except:
                 pro_jscs_html = None
 
@@ -235,8 +241,9 @@ def parse_detail(product_info, html):
 
             _data = {
                 'pro_link': product_info['pro_link'],
+                'series': series,
+                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
-                'pro_desc': pro_detail,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': '/'.join(pro_images_back),
@@ -248,26 +255,24 @@ def parse_detail(product_info, html):
     if product_info['domain'] == "www.syntop-ien.com":
         try:
             try:
-                pro_desc = soup.find('div', {'class': 'jyms'}).get_text().replace('\n', '').replace('\t', '').replace(
-                    '\r',
-                    '').strip()
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
+
+            try:
+                pro_desc = soup.find('div', {'class': 'jyms'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').replace('简要描述：', '').strip()
             except:
                 pro_desc = None
 
             pro_yyly = None
 
             try:
-                pro_detail = soup.find('div', {'class': 'pro_xxjs'}).get_text().replace('\n', '').replace('\t',
-                                                                                                          '').replace(
-                    '\r',
-                    '').strip()
-                if pro_desc:
-                    pro_detail = '\n'.join([pro_desc, pro_detail])
-            except:
-                pro_detail = None
-
-            try:
-                pro_jscs_html = str(soup.find('div', {'class': 'prodetail_con'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'jyms'})) + '\n' + str(soup.find('div', {'class': 'pro_xxjs'}))
             except:
                 pro_jscs_html = None
 
@@ -306,8 +311,9 @@ def parse_detail(product_info, html):
 
             _data = {
                 'pro_link': product_info['pro_link'],
+                'series': series,
+                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
-                'pro_desc': pro_detail,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': '/'.join(pro_images_back),
