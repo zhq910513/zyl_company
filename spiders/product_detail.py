@@ -38,23 +38,7 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_detail = []
-                for det in soup.find('section', {'class': 'mt-90 mb-90'}).find_all('div', {'class': 'col-md-6'}):
-                    try:
-                        h3 = det.find('h3').get_text()
-                        p = det.find('p').get_text()
-                        pro_detail.append(f"{h3}-{p}")
-                    except:
-                        pass
-                if pro_detail:
-                    pro_detail = '\n'.join(pro_detail)
-                if pro_desc:
-                    pro_detail = '\n'.join([pro_desc, pro_detail])
-            except:
-                pro_detail = None
-
-            try:
-                pro_jscs_html = str(soup.find('div', {'class': 'mb-60'})) + '\n' + str(soup.find('section', {'class': 'mt-90 mb-90'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'mb-60'})) + '\n' + str(soup.find('div', {'class': 'container'}))
             except:
                 pro_jscs_html = None
 
@@ -104,7 +88,7 @@ def parse_detail(product_info, html):
             _data = {
                 'pro_link': product_info['pro_link'],
                 'pro_yyly': pro_yyly,
-                'pro_desc': pro_detail,
+                'pro_desc': pro_desc,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': '/'.join(pro_images_back),

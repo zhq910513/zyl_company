@@ -4,7 +4,7 @@
 """
 @author: the king
 @project: zyl_company
-@file: company_info.py
+@file: main.py
 @time: 2022/4/21 14:17
 """
 
@@ -118,4 +118,4 @@ if __name__ == "__main__":
 
     for pi in MongoPipeline("products").find({"domain": "www.jmjj.com"}):
         product_detail(pi)
-        # break
+        break
