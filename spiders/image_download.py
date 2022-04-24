@@ -146,8 +146,10 @@ def format_img_url(product_info, img_url):
     try:
         scheme = product_info['pro_link'].split('//')[0]
         if 'http' not in img_url and 'https' not in img_url:
+            if str(img_url).startswith(':'):
+                img_url = scheme + img_url[1:]
             # //www.njkwls.com/ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
-            if str(img_url).startswith('//'):
+            elif str(img_url).startswith('//'):
                 img_url = scheme + img_url
             elif str(img_url).startswith('/'):
                 # /ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
