@@ -1,3 +1,0 @@
-[ERROR] 2022-04-23 15:01:30 [parse_list] 'NoneType' object has no attribute 'find_all' D:\BaiduNetdiskDownload\zyl_company\spiders\company_info.py:226
-[ERROR] 2022-04-23 15:01:52 [parse_list] 'NoneType' object has no attribute 'find_all' D:\BaiduNetdiskDownload\zyl_company\spiders\company_info.py:226
-[ERROR] 2022-04-23 15:02:11 [parse_list] 'NoneType' object has no attribute 'find_all' D:\BaiduNetdiskDownload\zyl_company\spiders\company_info.py:226
