@@ -4,7 +4,7 @@
 """
 @author: the king
 @project: zyl_company
-@file: company_info.py
+@file: image_download.py
 @time: 2022/4/21 14:17
 """
 import hashlib

@@ -9,14 +9,30 @@
 """
 from urllib.parse import urlparse
 
+import requests
 from bs4 import BeautifulSoup
 
 from common.log_out import log_err, log
 from dbs.pipelines import MongoPipeline
-from spiders.company_info import product_list
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
+
+
+# 请求产品列表
+def next_product_list(company_info):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
+        }
+        resp = requests.get(company_info['company_url'], headers=headers, verify=False)
+        resp.encoding = 'utf-8'
+        if resp.status_code == 200:
+            parse_list(company_info, resp.text)
+        else:
+            print(resp.status_code)
+    except Exception as error:
+        log_err(error)
 
 
 # 解析产品列表
@@ -150,7 +166,7 @@ def parse_list(company_info, html):
                                 'company_name': '南京新拓智能装备有限公司',
                                 'company_url': 'http://www.syntop-ien.com' + a.get('href')
                             }
-                            return product_list(next_page)
+                            return next_product_list(next_page)
                     except:
                         pass
             except:

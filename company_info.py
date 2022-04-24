@@ -12,8 +12,8 @@ import requests
 
 from common.log_out import log_err
 from dbs.pipelines import MongoPipeline
-from product_detail import parse_detail
-from product_list import parse_list
+from spiders.product_detail import parse_detail
+from spiders.product_list import parse_list
 
 requests.packages.urllib3.disable_warnings()
 
