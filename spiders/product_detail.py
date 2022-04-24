@@ -4,18 +4,18 @@
 """
 @author: the king
 @project: zyl_company
-@file: company_info.py
+@file: product_detail.py
 @time: 2022/4/21 14:17
 """
-import pprint
+import hashlib
 
 from bs4 import BeautifulSoup
 
 from common.log_out import log_err
-from spiders.company_info import command_thread, format_img_url, serverUrl
+from spiders.image_download import command_thread, format_img_url, serverUrl
 
+import pprint
 pp = pprint.PrettyPrinter(indent=4)
-import hashlib
 
 
 # 解析产品详细内容
@@ -54,7 +54,7 @@ def parse_detail(product_info, html):
                 pro_detail = None
 
             try:
-                pro_jscs_html = str(soup.find('main', {'class': 'main product_i'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'mb-60'})) + '\n' + str(soup.find('section', {'class': 'mt-90 mb-90'}))
             except:
                 pro_jscs_html = None
 

@@ -4,19 +4,19 @@
 """
 @author: the king
 @project: zyl_company
-@file: company_info.py
+@file: product_list.py
 @time: 2022/4/21 14:17
 """
-import pprint
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
 from common.log_out import log_err, log
+from dbs.pipelines import MongoPipeline
 from spiders.company_info import product_list
 
+import pprint
 pp = pprint.PrettyPrinter(indent=4)
-from dbs.pipelines import MongoPipeline
 
 
 # 解析产品列表
