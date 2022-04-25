@@ -142,8 +142,8 @@ def parse_all_category(company_info, html):
 
 if __name__ == "__main__":
     ci = {
-        'company_name': '张家港格兰机械有限公司',
-        'company_url': 'https://www.gelanjx.com/product.html'
+        'company_name': '苏州铁龙机械有限公司',
+        'company_url': 'https://tielong437.51pla.com/'
     }
     urls = get_all_category(ci)
     print(urls)
