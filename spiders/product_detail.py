@@ -73,10 +73,8 @@ def parse_detail(product_info, html):
 
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if not str(img_url).startswith('https:'):
-                            encode_img_url = 'https:' + img_url
-                        else:
-                            encode_img_url = img_url
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
                         new_img_url = serverUrl + hashlib.md5(encode_img_url.encode("utf8")).hexdigest() + '.' + \
                                       img_url.split('.')[-1]
                         pro_images_back.append(new_img_url.split('/')[-1])
@@ -227,10 +225,8 @@ def parse_detail(product_info, html):
 
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if not str(img_url).startswith('https:'):
-                            encode_img_url = 'https:' + img_url
-                        else:
-                            encode_img_url = img_url
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
                         new_img_url = serverUrl + hashlib.md5(encode_img_url.encode("utf8")).hexdigest() + '.' + \
                                       img_url.split('.')[-1]
                         pro_images_back.append(new_img_url.split('/')[-1])
@@ -300,10 +296,8 @@ def parse_detail(product_info, html):
 
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if not str(img_url).startswith('https:'):
-                            encode_img_url = 'https:' + img_url
-                        else:
-                            encode_img_url = img_url
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
                         new_img_url = serverUrl + hashlib.md5(encode_img_url.encode("utf8")).hexdigest() + '.' + \
                                       img_url.split('.')[-1]
                         pro_images_back.append(new_img_url.split('/')[-1])
@@ -376,10 +370,227 @@ def parse_detail(product_info, html):
 
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if not str(img_url).startswith('https:'):
-                            encode_img_url = 'https:' + img_url
-                        else:
-                            encode_img_url = img_url
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
+                        new_img_url = serverUrl + hashlib.md5(encode_img_url.encode("utf8")).hexdigest() + '.' + \
+                                      img_url.split('.')[-1]
+                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+            except:
+                pro_images_front = None
+                pro_images_back = None
+
+            _data = {
+                'pro_link': product_info['pro_link'],
+                'series': series,
+                'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
+                'pro_jscs_html': pro_jscs_html,
+                'pro_images_front': pro_images_front,
+                'pro_images_back': '/'.join(pro_images_back),
+                'status': 1
+            }
+            return _data
+        except Exception as error:
+            log_err(error)
+    if product_info['domain'] == 'www.oubeitejx.com':
+        try:
+            try:
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
+
+            try:
+                pro_desc = soup.find('div', {'class': 'show_property'}).find('p').get_text().replace('\n', '').replace('\t', '').replace('\r','').replace('产品简介：','').strip()
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'show_property'})) + '\n' + str(soup.find('div', {'class': 'content_body'}))
+            except:
+                pro_jscs_html = None
+
+            try:
+                replace_list = []
+                pro_images_front = []
+                pro_images_back = []
+
+                for img in soup.find('div', {'class': 'show_gallery'}).find_all('img'):
+                    try:
+                        img_url = img.get('src')
+                        if not isinstance(img_url, str): continue
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+                    except:
+                        pass
+
+                if pro_images_front:
+                    command_thread(product_info['company_name'], pro_images_front, Async=True)
+
+                if pro_jscs_html and replace_list:
+                    for img_url in replace_list:
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
+                        new_img_url = serverUrl + hashlib.md5(encode_img_url.encode("utf8")).hexdigest() + '.' + \
+                                      img_url.split('.')[-1]
+                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+            except:
+                pro_images_front = None
+                pro_images_back = None
+
+            _data = {
+                'pro_link': product_info['pro_link'],
+                'series': series,
+                'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
+                'pro_jscs_html': pro_jscs_html,
+                'pro_images_front': pro_images_front,
+                'pro_images_back': '/'.join(pro_images_back),
+                'status': 1
+            }
+            return _data
+        except Exception as error:
+            log_err(error)
+    if product_info['domain'] == 'www.asiastarpm.com':
+        try:
+            try:
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
+
+            try:
+                pro_desc = soup.find('div', {'class': 'cont_body'}).find_all('div', {'class': 'text_box'})[0].get_text().replace('\n', '').replace('\t', '').replace('\r','').strip()
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = soup.find('div', {'class': 'cont_body'}).find_all('div', {'class': 'text_box'})[-1].get_text().replace('\n', '').replace('\t', '').replace('\r','').strip()
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_title'})[0]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[0]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_title'})[1]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[1]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_title'})[2]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[2])
+            except:
+                pro_jscs_html = None
+
+            try:
+                replace_list = []
+                pro_images_front = []
+                pro_images_back = []
+
+                for img in soup.find('div', {'class': 'list-in'}).find_all('a'):
+                    try:
+                        img_url = img.get('href')
+                        if not isinstance(img_url, str): continue
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+                    except:
+                        pass
+
+                if pro_images_front:
+                    command_thread(product_info['company_name'], pro_images_front, Async=True)
+
+                if pro_jscs_html and replace_list:
+                    for img_url in replace_list:
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
+                        new_img_url = serverUrl + hashlib.md5(encode_img_url.encode("utf8")).hexdigest() + '.' + \
+                                      img_url.split('.')[-1]
+                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+            except:
+                pro_images_front = None
+                pro_images_back = None
+
+            _data = {
+                'pro_link': product_info['pro_link'],
+                'series': series,
+                'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
+                'pro_jscs_html': pro_jscs_html,
+                'pro_images_front': pro_images_front,
+                'pro_images_back': '/'.join(pro_images_back),
+                'status': 1
+            }
+            return _data
+        except Exception as error:
+            log_err(error)
+    if product_info['domain'] == 'www.gelanjx.com':
+        try:
+            try:
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
+
+            try:
+                pro_desc = soup.find('div', {'class': 'p14-prodcontent-1 blk'}).find_next('div').get_text().replace('\n', '').replace('\t', '').replace(
+                    '\r', '').strip()
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'p14-prodcontent-1 blk'}))
+            except:
+                pro_jscs_html = None
+
+            try:
+                replace_list = []
+                pro_images_front = []
+                pro_images_back = []
+
+                for img in soup.find('div', {'class': 'p14-prodcontent-1 blk'}).find_all('img'):
+                    try:
+                        img_url = img.get('src')
+                        if not isinstance(img_url, str): continue
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+                    except:
+                        pass
+
+                if pro_images_front:
+                    command_thread(product_info['company_name'], pro_images_front, Async=True)
+
+                if pro_jscs_html and replace_list:
+                    for img_url in replace_list:
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
                         new_img_url = serverUrl + hashlib.md5(encode_img_url.encode("utf8")).hexdigest() + '.' + \
                                       img_url.split('.')[-1]
                         pro_images_back.append(new_img_url.split('/')[-1])

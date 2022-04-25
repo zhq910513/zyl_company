@@ -62,7 +62,7 @@ serverUrl = 'https://zuiyouliao-prod.oss-cn-beijing.aliyuncs.com/zx/image/'
 pic_info = {'id': 0, 'pic_type': 3}
 
 import pprint
-
+from bs4 import BeautifulSoup
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -93,10 +93,40 @@ def product_detail(product_info):
         resp.encoding = 'utf-8'
         if resp.status_code == 200:
             _data = parse_detail(product_info, resp.text)
-            # print(_data)
-            MongoPipeline('products').update_item({'pro_link': None}, _data)
+            print(_data)
+            # MongoPipeline('products').update_item({'pro_link': None}, _data)
     except Exception as error:
         log_err(error)
+
+
+def get_all_category(company_info):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
+        }
+        resp = requests.get(company_info['company_url'], headers=headers, verify=False)
+        resp.encoding = 'utf-8'
+        if resp.status_code == 200:
+            return parse_all_category(company_info, resp.text)
+        else:
+            print(resp.status_code)
+    except Exception as error:
+        log_err(error)
+
+
+def parse_all_category(company_info, html):
+    url_list = []
+    try:
+        soup = BeautifulSoup(html, 'lxml')
+        for li in soup.find('div', {'class': 'p14-left-nav-1-nav'}).find_all('dt'):
+            link = 'https://www.gelanjx.com/' + li.find('a').get('href')
+            url_list.append({
+                'company_name': company_info['company_name'],
+                'company_url': link
+            })
+    except Exception as error:
+        log_err(error)
+    return url_list
 
 
 """
@@ -112,11 +142,13 @@ def product_detail(product_info):
 
 if __name__ == "__main__":
     ci = {
-        'company_name': '苏州铁龙机械有限公司',
-        'company_url': 'https://tielong437.51pla.com/product.htm'
+        'company_name': '张家港格兰机械有限公司',
+        'company_url': 'https://www.gelanjx.com/product.html'
     }
-    # product_list(ci)
+    # urls = get_all_category(ci)
+    # for url_info in urls:
+    #     product_list(url_info)
 
-    for pi in MongoPipeline("products").find({"domain": "tielong437.51pla.com"}):
+    for pi in MongoPipeline("products").find({}):
         product_detail(pi)
         # break
