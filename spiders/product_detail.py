@@ -8,14 +8,11 @@
 @time: 2022/4/21 14:17
 """
 import hashlib
-import pprint
 
 from bs4 import BeautifulSoup
 
 from common.log_out import log_err
 from spiders.image_download import command_thread, format_img_url, serverUrl
-
-pp = pprint.PrettyPrinter(indent=4)
 
 
 # 解析产品详细内容
@@ -109,7 +106,8 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'p_content'}).get_text().replace('\n', '').replace('\t', '').replace(
+                pro_desc = soup.find('div', {'class': 'p_content'}).get_text().replace('\n', '').replace('\t',
+                                                                                                         '').replace(
                     '\r', '').strip()
             except:
                 pro_desc = None
@@ -261,7 +259,8 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'jyms'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').replace('简要描述：', '').strip()
+                pro_desc = soup.find('div', {'class': 'jyms'}).get_text().replace('\n', '').replace('\t', '').replace(
+                    '\r', '').replace('简要描述：', '').strip()
             except:
                 pro_desc = None
 
@@ -271,7 +270,8 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'jyms'})) + '\n' + str(soup.find('div', {'class': 'pro_xxjs'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'jyms'})) + '\n' + str(
+                    soup.find('div', {'class': 'pro_xxjs'}))
             except:
                 pro_jscs_html = None
 
@@ -333,7 +333,7 @@ def parse_detail(product_info, html):
 
             try:
                 pro_desc = soup.find('meta', {'name': 'description'}).get('content').replace('\n', '').replace('\t',
-                                                                                                                 '').replace(
+                                                                                                               '').replace(
                     '\r',
                     '').strip()
             except:
@@ -345,7 +345,8 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'product-info'})) + '\n' + str(soup.find('div', {'class': 'details'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'product-info'})) + '\n' + str(
+                    soup.find('div', {'class': 'details'}))
             except:
                 pro_jscs_html = None
 
@@ -406,7 +407,8 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'show_property'}).find('p').get_text().replace('\n', '').replace('\t', '').replace('\r','').replace('产品简介：','').strip()
+                pro_desc = soup.find('div', {'class': 'show_property'}).find('p').get_text().replace('\n', '').replace(
+                    '\t', '').replace('\r', '').replace('产品简介：', '').strip()
             except:
                 pro_desc = None
 
@@ -416,7 +418,8 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'show_property'})) + '\n' + str(soup.find('div', {'class': 'content_body'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'show_property'})) + '\n' + str(
+                    soup.find('div', {'class': 'content_body'}))
             except:
                 pro_jscs_html = None
 
@@ -477,22 +480,32 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'cont_body'}).find_all('div', {'class': 'text_box'})[0].get_text().replace('\n', '').replace('\t', '').replace('\r','').strip()
+                pro_desc = soup.find('div', {'class': 'cont_body'}).find_all('div', {'class': 'text_box'})[
+                    0].get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
             except:
                 pro_desc = None
 
             try:
-                pro_yyly = soup.find('div', {'class': 'cont_body'}).find_all('div', {'class': 'text_box'})[-1].get_text().replace('\n', '').replace('\t', '').replace('\r','').strip()
+                pro_yyly = soup.find('div', {'class': 'cont_body'}).find_all('div', {'class': 'text_box'})[
+                    -1].get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
             except:
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_title'})[0]) + '\n' + \
-                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[0]) + '\n' + \
-                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_title'})[1]) + '\n' + \
-                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[1]) + '\n' + \
-                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_title'})[2]) + '\n' + \
-                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[2])
+                pro_jscs_html = str(
+                    soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_title'})[0]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[
+                                        0]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div',
+                                                                                         {'class': 'text_title'})[
+                                        1]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[
+                                        1]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div',
+                                                                                         {'class': 'text_title'})[
+                                        2]) + '\n' + \
+                                str(soup.find('div', {'class': 'porduct_show'}).find_all('div', {'class': 'text_box'})[
+                                        2])
             except:
                 pro_jscs_html = None
 
@@ -553,7 +566,8 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'p14-prodcontent-1 blk'}).find_next('div').get_text().replace('\n', '').replace('\t', '').replace(
+                pro_desc = soup.find('div', {'class': 'p14-prodcontent-1 blk'}).find_next('div').get_text().replace(
+                    '\n', '').replace('\t', '').replace(
                     '\r', '').strip()
             except:
                 pro_desc = None

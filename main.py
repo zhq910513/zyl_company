@@ -61,12 +61,10 @@ videoUploadHeaders = {
 serverUrl = 'https://zuiyouliao-prod.oss-cn-beijing.aliyuncs.com/zx/image/'
 pic_info = {'id': 0, 'pic_type': 3}
 
-import pprint
 from bs4 import BeautifulSoup
-pp = pprint.PrettyPrinter(indent=4)
 
 
-# 请求产品列表
+# 请求列表
 def product_list(company_info):
     try:
         headers = {
@@ -82,7 +80,7 @@ def product_list(company_info):
         log_err(error)
 
 
-# 请求产品详细内容
+# 请求详细内容
 def product_detail(product_info):
     try:
         headers = {
@@ -99,6 +97,7 @@ def product_detail(product_info):
         log_err(error)
 
 
+# 获取所有分类
 def get_all_category(company_info):
     try:
         headers = {
@@ -114,6 +113,7 @@ def get_all_category(company_info):
         log_err(error)
 
 
+# 解析所有分类
 def parse_all_category(company_info, html):
     url_list = []
     try:
@@ -145,10 +145,11 @@ if __name__ == "__main__":
         'company_name': '张家港格兰机械有限公司',
         'company_url': 'https://www.gelanjx.com/product.html'
     }
-    # urls = get_all_category(ci)
+    urls = get_all_category(ci)
+    print(urls)
     # for url_info in urls:
     #     product_list(url_info)
 
-    for pi in MongoPipeline("products").find({}):
-        product_detail(pi)
-        # break
+    # for pi in MongoPipeline("products").find({}):
+    #     product_detail(pi)
+    #     break

@@ -15,9 +15,6 @@ from bs4 import BeautifulSoup
 from common.log_out import log_err, log
 from dbs.pipelines import MongoPipeline
 
-import pprint
-pp = pprint.PrettyPrinter(indent=4)
-
 
 # 请求产品列表
 def next_product_list(company_info):
