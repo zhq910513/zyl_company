@@ -91,8 +91,8 @@ def product_detail(product_info):
         resp.encoding = 'utf-8'
         if resp.status_code == 200:
             _data = parse_detail(product_info, resp.text)
-            print(_data)
-            # MongoPipeline('products').update_item({'pro_link': None}, _data)
+            # print(_data)
+            MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, _data)
     except Exception as error:
         log_err(error)
 
@@ -118,11 +118,12 @@ def parse_all_category(company_info, html):
     url_list = []
     try:
         soup = BeautifulSoup(html, 'lxml')
-        for li in soup.find('div', {'class': 'p14-left-nav-1-nav'}).find_all('dt'):
-            link = 'https://www.gelanjx.com/' + li.find('a').get('href')
+        for li in soup.find('div', {'class': 'series'}).find_all('a'):
+            link = 'http://www.yonghuazhusuji.com' + li.get('href')
             url_list.append({
                 'company_name': company_info['company_name'],
-                'company_url': link
+                'company_url': link,
+                'cate_1_name': li.get_text().strip()
             })
     except Exception as error:
         log_err(error)
@@ -142,14 +143,17 @@ def parse_all_category(company_info, html):
 
 if __name__ == "__main__":
     ci = {
-        'company_name': '苏州铁龙机械有限公司',
-        'company_url': 'https://tielong437.51pla.com/'
+        'company_name': '宁波甬华塑料机械制造有限公司',
+        'company_url': 'http://www.yonghuazhusuji.com/'
     }
-    urls = get_all_category(ci)
-    print(urls)
-    # for url_info in urls:
-    #     product_list(url_info)
+    # product_list(ci)
 
-    # for pi in MongoPipeline("products").find({}):
+    urls = get_all_category(ci)
+    # print(urls)
+    for url_info in urls:
+        product_list(url_info)
+        break
+
+    # for pi in MongoPipeline("products").find({'pro_jscs_html': None}):
     #     product_detail(pi)
-    #     break
+        # break

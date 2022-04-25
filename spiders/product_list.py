@@ -16,7 +16,7 @@ from common.log_out import log_err, log
 from dbs.pipelines import MongoPipeline
 
 
-# 请求产品列表
+# 请求列表
 def next_product_list(company_info):
     try:
         headers = {
@@ -32,7 +32,7 @@ def next_product_list(company_info):
         log_err(error)
 
 
-# 解析产品列表
+# 解析列表
 def parse_list(company_info, html):
     soup = BeautifulSoup(html, 'lxml')
     domain = urlparse(company_info['company_url']).netloc
@@ -91,7 +91,7 @@ def parse_list(company_info, html):
                                                 'pro_name': pro_name,
                                                 'pro_link': pro_link
                                             }
-                                        MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                                        MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
                 except Exception as error:
                     log(error)
         if domain == "www.njkwls.com":
@@ -112,7 +112,7 @@ def parse_list(company_info, html):
                         'pro_link': pro_link
                     }
                     print(pro_data)
-                    MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                    MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
                 except:
                     pass
         if domain == "www.gdhuaxing.com":
@@ -133,7 +133,7 @@ def parse_list(company_info, html):
                         'pro_link': pro_link
                     }
                     print(pro_data)
-                    MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                    MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
                 except:
                     pass
         if domain == "www.syntop-ien.com":
@@ -154,7 +154,7 @@ def parse_list(company_info, html):
                     'pro_link': pro_link
                 }
                 print(pro_data)
-                MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
             try:
                 for a in soup.find('div', {'class': 'ly_page'}).find_all('a'):
                     try:
@@ -186,7 +186,7 @@ def parse_list(company_info, html):
                         'pro_link': pro_link
                     }
                     print(pro_data)
-                    MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                    MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
                 except:
                     pass
         if domain == "www.oubeitejx.com":
@@ -206,7 +206,7 @@ def parse_list(company_info, html):
                     'pro_link': pro_link
                 }
                 print(pro_data)
-                MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
         if domain == "www.asiastarpm.com":
             cate_1_name = soup.find('div', {'class': 'cont_body'}).find('div', {'class': 'title'}).get_text()
             for pro in soup.find('ul', {'id': 'product'}).find_all('li'):
@@ -224,7 +224,7 @@ def parse_list(company_info, html):
                     'pro_link': pro_link
                 }
                 print(pro_data)
-                MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
         if domain == "www.gelanjx.com":
             cate_1_name = soup.find('h3', {'class': 'leftnav-z1-tit'}).get_text().strip()
             for pro in soup.find('div', {'class': 'leftnav-z1-list'}).find_all('dl'):
@@ -242,6 +242,104 @@ def parse_list(company_info, html):
                     'pro_link': pro_link
                 }
                 print(pro_data)
-                MongoPipeline('products').update_item({'pro_link': None}, pro_data)
+                MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+        if domain == "www.jwell.cn":
+            cate_1_name = company_info['cate_1_name']
+            for pro in soup.find_all('div', {'class': 'infobox'}):
+                pro_name = pro.find('h2').get_text()
+                pro_link = company_info['company_url']
+                pro_data = {
+                    'company_name': company_info['company_name'],
+                    'company_url': 'https://www.jwell.cn/products.html',
+                    'domain': domain,
+                    'cate_1_name': cate_1_name,
+                    'cate_2_name': None,
+                    'cate_3_name': None,
+                    'categories': f'{cate_1_name}',
+                    'pro_name': pro_name,
+                    'pro_link': pro_link
+                }
+                print(pro_data)
+                MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+        if domain == "www.dxs1907.cn":
+            cate_1_name = company_info['cate_1_name']
+            cate_2_name = soup.find('div', {'class': 'reset_style'}).get_text().replace('\n', '').replace('\t', '').replace('\r',
+                                                                                                                   '').strip()
+            for pro in soup.find('ul', {'class': 'row'}).find_all('li'):
+                pro_name = pro.find('a', {'class': 'cateName1'}).get_text().replace('\n', '').replace('\t', '').replace('\r',
+                                                                                                                   '').strip()
+                pro_link = pro.find('a', {'class': 'cateName1'}).get('href')
+                pro_data = {
+                    'company_name': company_info['company_name'],
+                    'company_url': 'http://www.dxs1907.cn',
+                    'domain': domain,
+                    'cate_1_name': cate_1_name,
+                    'cate_2_name': cate_2_name if cate_2_name != cate_1_name else '',
+                    'cate_3_name': None,
+                    'categories': f'{cate_1_name}' if cate_2_name == cate_1_name else f'{cate_1_name}-{cate_2_name}',
+                    'pro_name': pro_name,
+                    'pro_link': pro_link
+                }
+                print(pro_data)
+                MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+        #
+        if domain == "www.kymach.com":
+            cate_1_name = company_info['cate_1_name']
+            pro_name = company_info['cate_1_name']
+            pro_link = company_info['company_url']
+            pro_data = {
+                'company_name': company_info['company_name'],
+                'company_url': 'http://www.kymach.com/product/1006/',
+                'domain': domain,
+                'cate_1_name': cate_1_name,
+                'cate_2_name': None,
+                'cate_3_name': None,
+                'categories': f'{cate_1_name}',
+                'pro_name': pro_name,
+                'pro_link': pro_link
+            }
+            print(pro_data)
+            MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+        if domain == "www.topstarltd.com":
+            for pro in soup.find_all('div', {'class': 'product_list'}):
+                cate_1_name = pro.find('div', {'class': 'product_list_name fl'}).get_text().strip()
+
+                for li in pro.find_all('li', {'class': 'product_mar20'}):
+                    pro_name = li.find('a').get('title')
+                    pro_link = 'http://www.topstarltd.com' + li.find('a').get('href')
+                    pro_data = {
+                        'company_name': company_info['company_name'],
+                        'company_url': company_info['company_url'],
+                        'domain': domain,
+                        'cate_1_name': cate_1_name,
+                        'cate_2_name': None,
+                        'cate_3_name': None,
+                        'categories': f'{cate_1_name}',
+                        'pro_name': pro_name,
+                        'pro_link': pro_link
+                    }
+                    print(pro_data)
+                    MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+
+        if domain == "www.yonghuazhusuji.com":
+            for pro in soup.find('div', {'class': 'series'}).find_all('a'):
+                cate_1_name = pro.get_text().strip()
+
+                for li in pro.find_all('li', {'class': 'product_mar20'}):
+                    pro_name = li.find('a').get('title')
+                    pro_link = 'http://www.topstarltd.com' + li.find('a').get('href')
+                    pro_data = {
+                        'company_name': company_info['company_name'],
+                        'company_url': company_info['company_url'],
+                        'domain': domain,
+                        'cate_1_name': cate_1_name,
+                        'cate_2_name': None,
+                        'cate_3_name': None,
+                        'categories': f'{cate_1_name}',
+                        'pro_name': pro_name,
+                        'pro_link': pro_link
+                    }
+                    print(pro_data)
+                    MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
     except Exception as error:
         log_err(error)
