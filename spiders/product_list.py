@@ -322,8 +322,10 @@ def parse_list(company_info, html):
                     MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
 
         if domain == "www.yonghuazhusuji.com":
+            cate_1_name = company_info['cate_1_name']
+            
             for pro in soup.find('div', {'class': 'series'}).find_all('a'):
-                cate_1_name = pro.get_text().strip()
+                cate_2_name = pro.get_text().strip()
 
                 for li in pro.find_all('li', {'class': 'product_mar20'}):
                     pro_name = li.find('a').get('title')
@@ -333,13 +335,13 @@ def parse_list(company_info, html):
                         'company_url': company_info['company_url'],
                         'domain': domain,
                         'cate_1_name': cate_1_name,
-                        'cate_2_name': None,
+                        'cate_2_name': cate_2_name,
                         'cate_3_name': None,
                         'categories': f'{cate_1_name}',
                         'pro_name': pro_name,
                         'pro_link': pro_link
                     }
                     print(pro_data)
-                    MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+                    # MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
     except Exception as error:
         log_err(error)

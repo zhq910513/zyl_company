@@ -149,10 +149,10 @@ if __name__ == "__main__":
     # product_list(ci)
 
     urls = get_all_category(ci)
-    # print(urls)
-    for url_info in urls:
-        product_list(url_info)
-        break
+    print(urls)
+    # for url_info in urls:
+    #     product_list(url_info)
+    #     break
 
     # for pi in MongoPipeline("products").find({'pro_jscs_html': None}):
     #     product_detail(pi)
