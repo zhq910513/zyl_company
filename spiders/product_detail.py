@@ -1388,7 +1388,6 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
-
     if product_info['domain'] == "www.xinbeijx.com":
         try:
             try:
@@ -1511,3 +1510,4 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
+

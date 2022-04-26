@@ -396,7 +396,6 @@ def parse_list(company_info, html):
                             MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
                     except:
                         continue
-
         if domain == "www.xinbeijx.com":
             cate_1_name = company_info['cate_1_name']
             cate_2_name = company_info['cate_2_name']
@@ -436,5 +435,7 @@ def parse_list(company_info, html):
                         pass
             except:
                 pass
+
+
     except Exception as error:
         log_err(error)

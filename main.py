@@ -92,6 +92,11 @@ def product_detail(product_info):
         if resp.status_code == 200:
             _data = parse_detail(product_info, resp.text)
             # print(_data)
+            html_css = _data.get('pro_jscs_html')
+            if html_css:
+                html_css = html_css.replace('\"', "'")
+                html_css = html_css.replace('\n', "'").replace('\t', "'").replace('\r', "'")
+                _data['pro_jscs_html'] = html_css
             MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, _data)
     except Exception as error:
         log_err(error)
@@ -161,17 +166,6 @@ def parse_all_category_2(company_info, html):
         log_err(error)
     return url_list
 
-
-"""
-                '生产企业': i.get('company_name'),
-                '产品类型（1-3级）': i.get('category_excel'),
-                '产品名称': i.get('pro_name'),
-                '产品图片': i.get('images_excel'),
-                '产品介绍': i.get('pro_desc'),
-                # '产品详情': i.get('pro_jscs_html'),
-                '应用行业-领域': i.get('pro_yyly'),
-                '部件介绍': i.get('pro_detail')
-"""
 
 if __name__ == "__main__":
     ci = {
