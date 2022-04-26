@@ -112,18 +112,50 @@ def get_all_category(company_info):
     except Exception as error:
         log_err(error)
 
-
 # 解析所有分类
 def parse_all_category(company_info, html):
     url_list = []
     try:
         soup = BeautifulSoup(html, 'lxml')
-        for li in soup.find('div', {'class': 'series'}).find_all('a'):
-            link = 'http://www.yonghuazhusuji.com' + li.get('href')
+        for li in soup.find('div', {'class': 'cpMuCont'}).find_all('a'):
+            link = li.get('href')
             url_list.append({
                 'company_name': company_info['company_name'],
                 'company_url': link,
                 'cate_1_name': li.get_text().strip()
+            })
+    except Exception as error:
+        log_err(error)
+    return url_list
+
+
+# 获取所有分类
+def get_all_category_2(company_info):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
+        }
+        resp = requests.get(company_info['company_url'], headers=headers, verify=False)
+        resp.encoding = 'utf-8'
+        if resp.status_code == 200:
+            return parse_all_category_2(company_info, resp.text)
+        else:
+            print(resp.status_code)
+    except Exception as error:
+        log_err(error)
+
+# 解析所有分类
+def parse_all_category_2(company_info, html):
+    url_list = []
+    try:
+        soup = BeautifulSoup(html, 'lxml')
+        for li in soup.find('div', {'class': 'cpMuCont'}).find_all('a'):
+            link = li.get('href')
+            url_list.append({
+                'company_name': company_info['company_name'],
+                'cate_1_name': company_info['cate_1_name'],
+                'company_url': link,
+                'cate_2_name': li.get_text().strip()
             })
     except Exception as error:
         log_err(error)
@@ -143,17 +175,19 @@ def parse_all_category(company_info, html):
 
 if __name__ == "__main__":
     ci = {
-        'company_name': '宁波甬华塑料机械制造有限公司',
-        'company_url': 'http://www.yonghuazhusuji.com/'
+        'company_name': '张家港市新贝机械有限公司',
+        'company_url': 'https://www.xinbeijx.com/PRODUCT/'
     }
     # product_list(ci)
 
-    urls = get_all_category(ci)
-    print(urls)
+    # urls = get_all_category(ci)
+    # print(urls)
     # for url_info in urls:
-    #     product_list(url_info)
-    #     break
+    #     for url_info_2 in get_all_category_2(url_info):
+    #         product_list(url_info_2)
+            # break
+        # break
 
-    # for pi in MongoPipeline("products").find({'pro_jscs_html': None}):
-    #     product_detail(pi)
+    for pi in MongoPipeline("products").find({"domain" : 'www.xinbeijx.com'}):
+        product_detail(pi)
         # break

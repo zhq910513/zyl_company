@@ -69,8 +69,7 @@ pp = pprint.PrettyPrinter(indent=4)
 # 下载/上传 图片 函数
 def DownloadPicture_Video(img_path, img_url, retry=0):
     # 图片
-    if img_url and img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith('.pdf') or img_url.endswith(
-            '.gif'):
+    if img_url and img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith('.pdf') or img_url.endswith('.wbep'):
         try:
             res = requests.get(img_url, timeout=60)
             if res.status_code == 200:

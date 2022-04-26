@@ -1124,4 +1124,390 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
+    if product_info['domain'] == "www.yonghuazhusuji.com":
+        try:
+            try:
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
 
+            try:
+                pro_desc = soup.find('div', {'class': 'productintro'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'tab-con container'}).find_all('div', {'class': 'con'})[-1])
+            except:
+                pro_jscs_html = None
+
+            try:
+                replace_list = []
+                pro_images_front = []
+                pro_images_back = []
+
+                for img in soup.find('div', {'class': 'productimgs container'}).find_all('img'):
+                    try:
+                        img_url = img.get('src')
+                        if not isinstance(img_url, str): continue
+
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+                    except:
+                        pass
+
+                # 替换非产品图片
+                not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
+                if not_pro_pic_list:
+                    for img_url in not_pro_pic_list:
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+
+                if pro_images_front:
+                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+
+                # 替换产品图片
+                if pro_jscs_html and replace_list:
+                    for img_url in replace_list:
+                        if 'zuiyouliao' in img_url:continue
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
+
+                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
+                        new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
+                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+
+                if pro_images_back:
+                    pro_images_back = '/'.join(pro_images_back)
+            except:
+                pro_images_front = None
+                pro_images_back = None
+
+            _data = {
+                'pro_link': product_info['pro_link'],
+                'pro_name': product_info['pro_name'],
+                'series': series,
+                'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
+                'pro_jscs_html': pro_jscs_html,
+                'pro_images_front': pro_images_front,
+                'pro_images_back': pro_images_back,
+                'status': 1
+            }
+            return _data
+        except Exception as error:
+            log_err(error)
+    if product_info['domain'] == "www.lk.world":
+        try:
+            try:
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
+
+            try:
+                pro_desc = soup.find('div', {'id': 'banner'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'feature_list'}))
+            except:
+                pro_jscs_html = None
+
+            try:
+                replace_list = []
+                pro_images_front = []
+                pro_images_back = []
+
+                for img in soup.find('div', {'class': 'large_photo'}).find_all('img'):
+                    try:
+                        img_url = img.get('src')
+                        if not isinstance(img_url, str): continue
+
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+                    except:
+                        pass
+
+                # 替换非产品图片
+                not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
+                if not_pro_pic_list:
+                    for img_url in not_pro_pic_list:
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+
+                if pro_images_front:
+                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+
+                # 替换产品图片
+                if pro_jscs_html and replace_list:
+                    for img_url in replace_list:
+                        if 'zuiyouliao' in img_url:continue
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
+
+                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
+                        new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
+                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+
+                if pro_images_back:
+                    pro_images_back = '/'.join(pro_images_back)
+            except:
+                pro_images_front = None
+                pro_images_back = None
+
+            _data = {
+                'pro_link': product_info['pro_link'],
+                'pro_name': product_info['pro_name'],
+                'series': series,
+                'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
+                'pro_jscs_html': pro_jscs_html,
+                'pro_images_front': pro_images_front,
+                'pro_images_back': pro_images_back,
+                'status': 1
+            }
+            return _data
+        except Exception as error:
+            log_err(error)
+    if product_info['domain'] == "www.tongdamachine.com":
+        try:
+            try:
+                if '系列' in product_info['cate_1_name']:
+                    series = product_info['cate_1_name']
+                elif '系列' in product_info.get('cate_2_name'):
+                    series = product_info['cate_2_name']
+                else:
+                    series = None
+            except:
+                series = None
+
+            try:
+                pro_desc = soup.find('div', {'class': 'fk-editor simpleText fk-editor-break-word'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = str(soup.find('div', {'class': 'richContent richContent0'}))
+            except:
+                pro_jscs_html = None
+
+            try:
+                replace_list = []
+                pro_images_front = []
+                pro_images_back = []
+
+                for img in soup.find('div', {'class': 'pdLayoutL'}).find_all('img'):
+                    try:
+                        img_url = img.get('src')
+                        if not isinstance(img_url, str): continue
+
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+                    except:
+                        pass
+
+                # 替换非产品图片
+                not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
+                if not_pro_pic_list:
+                    for img_url in not_pro_pic_list:
+                        new_img_url = format_img_url(product_info, img_url)
+                        if new_img_url and new_img_url not in pro_images_front:
+                            replace_list.append(img_url)
+                            pro_images_front.append(new_img_url)
+
+                if pro_images_front:
+                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+
+                # 替换产品图片
+                if pro_jscs_html and replace_list:
+                    for img_url in replace_list:
+                        if 'zuiyouliao' in img_url:continue
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
+
+                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
+                        new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
+                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+
+                if pro_images_back:
+                    pro_images_back = '/'.join(pro_images_back)
+            except:
+                pro_images_front = None
+                pro_images_back = None
+
+            _data = {
+                'pro_link': product_info['pro_link'],
+                'pro_name': product_info['pro_name'],
+                'series': series,
+                'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
+                'pro_jscs_html': pro_jscs_html,
+                'pro_images_front': pro_images_front,
+                'pro_images_back': pro_images_back,
+                'status': 1
+            }
+            return _data
+        except Exception as error:
+            log_err(error)
+
+    if product_info['domain'] == "www.xinbeijx.com":
+        try:
+            try:
+                if '系列' in product_info['cate_2_name']:
+                    series = product_info['cate_2_name']
+                elif '系列' in product_info.get('cate_1_name'):
+                    series = product_info['cate_1_name']
+                else:
+                    series = None
+            except:
+                series = None
+
+            try:
+                pro_desc = []
+                for num, h2 in enumerate(soup.find('div', {'id': 'contentvalue100'}).find_all('h2')):
+                    if '特点' in h2.get_text() or '优势' in h2.get_text():
+                        try:
+                            info = h2.find_next('ul')
+                        except:
+                            info = h2.find_next('span')
+                    else:continue
+
+                    try:
+                        pro_desc.append(info.get_text().replace('\n', '').replace('\t','').replace('\r', '').replace('在线咨询联系我们  微信公众号  移动版官网', '').strip())
+                    except:
+                        pass
+                if pro_desc:
+                    pro_desc = '\n'.join(pro_desc)
+            except:
+                pro_desc = None
+
+            try:
+                pro_yyly = None
+            except:
+                pro_yyly = None
+
+            try:
+                pro_jscs_html = []
+                for num, h2 in enumerate(soup.find('div', {'id': 'contentvalue100'}).find_all('h2')):
+                    if '参数' in h2.get_text():
+                        pro_jscs_html.append(str(h2))
+                        info = h2.find_next('p')
+                    elif'用途' in str(h2):
+                        pro_jscs_html.append(str(h2))
+                        info = h2.find_next('ul')
+                    else:continue
+                    pro_jscs_html.append(str(info))
+                if pro_jscs_html:
+                    pro_jscs_html = '\n'.join(pro_jscs_html)
+                else:
+                    pro_jscs_html = str(soup.find('div', {'id': 'contentvalue100'}))
+            except:
+                pro_jscs_html = None
+
+            try:
+                replace_list = []
+                pro_images_front = []
+                pro_images_back = []
+
+                try:
+                    for img in soup.find('ul', {'id': 'img_list'}).find_all('img'):
+                        try:
+                            img_url = img.get('src')
+                            if not isinstance(img_url, str): continue
+
+                            new_img_url = format_img_url(product_info, img_url)
+                            if new_img_url and new_img_url not in pro_images_front:
+                                replace_list.append(img_url)
+                                pro_images_front.append(new_img_url)
+                        except:
+                            pass
+                except:
+                    pass
+
+                if not pro_images_front:
+                    pro_jscs_html = str(soup.find('div', {'id': 'contentvalue100'}))
+
+                # 替换非产品图片
+                if pro_jscs_html:
+                    not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
+                    if not_pro_pic_list:
+                        for img_url in not_pro_pic_list:
+                            new_img_url = format_img_url(product_info, img_url)
+                            if new_img_url and new_img_url not in pro_images_front:
+                                replace_list.append(img_url)
+                                pro_images_front.append(new_img_url)
+
+                if pro_images_front:
+                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+
+                # 替换产品图片
+                if pro_jscs_html and replace_list:
+                    for img_url in replace_list:
+                        if 'zuiyouliao' in img_url:continue
+                        encode_img_url = format_img_url(product_info, img_url)
+                        if not encode_img_url: continue
+
+                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
+                        new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
+                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+
+                if pro_images_back:
+                    pro_images_back = '/'.join(pro_images_back)
+            except:
+                pro_images_front = None
+                pro_images_back = None
+
+            _data = {
+                'pro_link': product_info['pro_link'],
+                'pro_name': product_info['pro_name'],
+                'series': series,
+                'pro_desc': pro_desc,
+                'pro_yyly': pro_yyly,
+                'pro_jscs_html': pro_jscs_html,
+                'pro_images_front': pro_images_front,
+                'pro_images_back': pro_images_back,
+                'status': 1
+            }
+            return _data
+        except Exception as error:
+            log_err(error)
