@@ -66,7 +66,7 @@ class MongoPipeline:
                 log_err(error)
 
     def find(self, query):
-        return self.coll.find(query)
+        return self.coll.find(query, no_cursor_timeout=True)
 
     def find_one(self, query):
         return self.coll.find_one(query)
