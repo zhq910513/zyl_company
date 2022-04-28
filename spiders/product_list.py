@@ -91,7 +91,8 @@ def parse_list(company_info, html):
                                                 'pro_name': pro_name,
                                                 'pro_link': pro_link
                                             }
-                                        MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+                                        MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None},
+                                                                              pro_data)
                 except Exception as error:
                     log(error)
         if domain == "www.njkwls.com":
@@ -263,11 +264,14 @@ def parse_list(company_info, html):
                 MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
         if domain == "www.dxs1907.cn":
             cate_1_name = company_info['cate_1_name']
-            cate_2_name = soup.find('div', {'class': 'reset_style'}).get_text().replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                                   '').strip()
+            cate_2_name = soup.find('div', {'class': 'reset_style'}).get_text().replace('\n', '').replace('\t',
+                                                                                                          '').replace(
+                '\r',
+                '').strip()
             for pro in soup.find('ul', {'class': 'row'}).find_all('li'):
-                pro_name = pro.find('a', {'class': 'cateName1'}).get_text().replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                                   '').strip()
+                pro_name = pro.find('a', {'class': 'cateName1'}).get_text().replace('\n', '').replace('\t', '').replace(
+                    '\r',
+                    '').strip()
                 pro_link = pro.find('a', {'class': 'cateName1'}).get('href')
                 pro_data = {
                     'company_name': company_info['company_name'],
@@ -327,7 +331,7 @@ def parse_list(company_info, html):
                 try:
                     for item in soup.find_all('div', {'class': 'pcon'})[num].find_all('a', {'class': 'item'}):
                         pro_name = item.get_text().replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                                   '').strip()
+                                                                                               '').strip()
                         pro_link = 'http://www.yonghuazhusuji.com' + item.get('href')
                         pro_data = {
                             'company_name': company_info['company_name'],
@@ -353,7 +357,7 @@ def parse_list(company_info, html):
                         try:
                             for item in pro.find('ul', {'class': 'dropdown_lv2'}).find_all('a'):
                                 pro_name = item.get_text().replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                                           '').strip()
+                                                                                                       '').strip()
                                 pro_link = 'https://www.lk.world/sc/' + item.get('href')
                                 pro_data = {
                                     'company_name': company_info['company_name'],
@@ -371,38 +375,40 @@ def parse_list(company_info, html):
                         except:
                             continue
         if domain == "www.tongdamachine.com":
-                for num, cate in enumerate(soup.find('div', {'id': 'formTabButtonList5122'}).find_all('span')):
-                    cate_1_name = cate.get_text().strip()
-                    print(cate_1_name)
+            for num, cate in enumerate(soup.find('div', {'id': 'formTabButtonList5122'}).find_all('span')):
+                cate_1_name = cate.get_text().strip()
+                print(cate_1_name)
 
-                    try:
-                        info = soup.find('div', {'id': 'formTabContent5122'}).find('div', {'id': f'tabPackContent5122-{num}'})
-                        for item in info.find_all('div', {"topclassname": "productListTopIcon"}):
-                            pro_name = item.find('a', {'class': 'fk-productName'}).get('title').replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                                       '').strip()
-                            pro_link = item.find('a', {'class': 'fk-productName'}).get('href')
-                            pro_data = {
-                                'company_name': company_info['company_name'],
-                                'company_url': company_info['company_url'],
-                                'domain': domain,
-                                'cate_1_name': cate_1_name,
-                                'cate_2_name': None,
-                                'cate_3_name': None,
-                                'categories': f'{cate_1_name}',
-                                'pro_name': pro_name,
-                                'pro_link': pro_link
-                            }
-                            print(pro_data)
-                            MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
-                    except:
-                        continue
+                try:
+                    info = soup.find('div', {'id': 'formTabContent5122'}).find('div',
+                                                                               {'id': f'tabPackContent5122-{num}'})
+                    for item in info.find_all('div', {"topclassname": "productListTopIcon"}):
+                        pro_name = item.find('a', {'class': 'fk-productName'}).get('title').replace('\n', '').replace(
+                            '\t', '').replace('\r',
+                                              '').strip()
+                        pro_link = item.find('a', {'class': 'fk-productName'}).get('href')
+                        pro_data = {
+                            'company_name': company_info['company_name'],
+                            'company_url': company_info['company_url'],
+                            'domain': domain,
+                            'cate_1_name': cate_1_name,
+                            'cate_2_name': None,
+                            'cate_3_name': None,
+                            'categories': f'{cate_1_name}',
+                            'pro_name': pro_name,
+                            'pro_link': pro_link
+                        }
+                        print(pro_data)
+                        MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+                except:
+                    continue
         if domain == "www.xinbeijx.com":
             cate_1_name = company_info['cate_1_name']
             cate_2_name = company_info['cate_2_name']
             for pro in soup.find('div', {'class': 'pro_main'}).find_all('dl'):
                 try:
                     pro_name = pro.find('dt').find('a').get('title').replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                               '').strip()
+                                                                                                                 '').strip()
                     pro_link = pro.find('dt').find('a').get('href')
                     pro_data = {
                         'company_name': company_info['company_name'],
@@ -435,7 +441,5 @@ def parse_list(company_info, html):
                         pass
             except:
                 pass
-
-
     except Exception as error:
         log_err(error)

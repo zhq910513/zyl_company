@@ -4,7 +4,7 @@
 """
 @author: the king
 @project: zyl_company
-@file: image_download.py
+@file: download.py
 @time: 2022/4/21 14:17
 """
 import hashlib
@@ -15,6 +15,7 @@ from os import path
 import requests
 
 from common.log_out import log_err, log
+from dbs.pipelines import MongoPipeline
 
 requests.packages.urllib3.disable_warnings()
 
@@ -44,31 +45,22 @@ videoPageHeaders = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36'
 }
 videoUploadHeaders = {
-    'accept': '*/*',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
     'Accept-Encoding': 'gzip, deflate',
     'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
     'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-    'Content-Length': '25',
-    'Content-Type': 'application/json',
-    'Host': '8.129.215.170:8855',
-    'Origin': 'http://8.129.215.170:8855',
     'Pragma': 'no-cache',
-    'Referer': 'http://8.129.215.170:8855/swagger-ui.html',
+    'Upgrade-Insecure-Requests': '1',
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36'
 }
 serverUrl = 'https://zuiyouliao-prod.oss-cn-beijing.aliyuncs.com/zx/image/'
+videoServerUrl = 'http://qiniu.zuiyouliao.com/video/upload/'
 pic_info = {'id': 0, 'pic_type': 3}
 image_base_path = path.dirname(os.path.abspath(path.dirname(__file__)))
 
-import pprint
 
-pp = pprint.PrettyPrinter(indent=4)
-
-
-# 下载/上传 图片 函数
+# 下载/上传 图片/视频 函数
 def DownloadPicture_Video(img_path, img_url, retry=0):
-    # 图片
     if img_url and img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith('.pdf') or img_url.endswith('.wbep'):
         try:
             res = requests.get(img_url, timeout=60)
@@ -80,7 +72,6 @@ def DownloadPicture_Video(img_path, img_url, retry=0):
                     f.write(content)
 
                 # upload picture
-                # uploadUrl = 'https://zshqadmin.zuiyouliao.com/api/information/common/upload?type=2&isNameReal=1'
                 uploadUrl = 'http://27.150.182.135:8855/api/common/upload?composeId={0}&type={1}&isNameReal=0'.format(
                     pic_info['id'], pic_info['pic_type'])
 
@@ -115,6 +106,61 @@ def DownloadPicture_Video(img_path, img_url, retry=0):
             log_err(error)
             return None
         return None
+    elif img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith('.wmv') or \
+            img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith('.m4v') or img_url.endswith(
+        '.mov'):
+        try:
+            res = requests.get(img_url, timeout=60)
+            if res.status_code == 200:
+                basename = hashlib.md5(img_url.encode("utf8")).hexdigest() + '.' + img_url.split('.')[-1]
+                filename = os.path.join(img_path + '/' + basename)
+                with open(filename, "wb") as f:
+                    content = res.content
+                    f.write(content)
+
+                # upload video
+                # uploadUrl = 'http://27.150.182.135:8855/articleMaterials/attach/video'
+                uploadUrl = 'https://zshqadmin.zuiyouliao.com/api/information/video/upload'
+
+                file = open(filename, "rb")
+                files = {'file': file}
+
+                try:
+                    print("视频id {0} *** video upLoading ...... ***".format(img_url))
+                    resp = requests.post(url=uploadUrl, headers=videoUploadHeaders, files=files, verify=False,
+                                         timeout=120)
+                    if resp.json().get('code') == '200' and resp.json().get('entity'):
+                        print("视频id {0} *** upload video successfully *** upload status {1}".format(img_url,
+                                                                                                    resp.json().get(
+                                                                                                        'code')))
+
+                        # 保存链接至数据库
+                        video_hash_dict = {
+                            'hash_key': str(hashlib.md5(img_url.encode("utf8")).hexdigest()),
+                            'video_url_back': resp.json().get('entity').get('url')
+                        }
+                        MongoPipeline('video_hash').update_item({'hash_key': None}, video_hash_dict)
+                    elif resp.json().get('status') == '500' and 'DuplicateKey' in resp.json().get('exception'):
+                        pass
+                    else:
+                        log_err(resp.json())
+                except requests.exceptions.ConnectionError:
+                    log(f'服务器上传视频网络问题，重试中...{img_url}')
+                    if retry < 3:
+                        return DownloadPicture_Video(img_path, img_url, retry + 1)
+                    else:
+                        log_err(f'超过三次 服务器上传视频网络问题  {img_url}')
+                except Exception as error:
+                    log_err(error)
+                    log_err(uploadUrl)
+        except requests.exceptions.ConnectionError:
+            print(f'下载视频网络问题，重试中...  {img_url}')
+            if retry < 3:
+                return DownloadPicture_Video(img_path, img_url, retry + 1)
+        except Exception as error:
+            log_err(error)
+            return None
+        return None
     else:
         pass
 
@@ -140,7 +186,7 @@ def command_thread(company_name, image_list, Async=True):
     pool.join()
 
 
-# 格式化图片链接
+# 格式化链接
 def format_img_url(product_info, img_url):
     try:
         scheme = product_info['pro_link'].split('//')[0]

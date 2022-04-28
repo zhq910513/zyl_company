@@ -13,7 +13,8 @@ import re
 from bs4 import BeautifulSoup
 
 from common.log_out import log_err
-from spiders.image_download import command_thread, format_img_url, serverUrl
+from dbs.pipelines import MongoPipeline
+from spiders.download import command_thread, format_img_url, serverUrl
 
 
 # 解析详细内容
@@ -45,7 +46,8 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('section', {'class': 'mt-90 mb-90'})) + '\n' + str(soup.find('section', {'class': 'mt-90 pb-45 pt-90 bg-lightgray'}))
+                pro_jscs_html = str(soup.find('section', {'class': 'mt-90 mb-90'})) + '\n' + str(
+                    soup.find('section', {'class': 'mt-90 pb-45 pt-90 bg-lightgray'}))
             except:
                 pro_jscs_html = None
 
@@ -82,20 +84,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -171,21 +172,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
-
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
             _data = {
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
@@ -258,20 +257,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -348,20 +346,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -440,20 +437,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -530,20 +526,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -633,20 +628,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -723,20 +717,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -768,7 +761,9 @@ def parse_detail(product_info, html):
                     series = None
 
                 try:
-                    pro_desc = info.find_all('div', {'class': 'con'})[0].get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+                    pro_desc = info.find_all('div', {'class': 'con'})[0].get_text().replace('\n', '').replace('\t',
+                                                                                                              '').replace(
+                        '\r', '').strip()
                 except:
                     pro_desc = None
 
@@ -814,20 +809,19 @@ def parse_detail(product_info, html):
                     # 替换产品图片
                     if pro_jscs_html and replace_list:
                         for img_url in replace_list:
-                            if 'zuiyouliao' in img_url:continue
+                            if 'zuiyouliao' in img_url: continue
                             encode_img_url = format_img_url(product_info, img_url)
                             if not encode_img_url: continue
 
                             hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                             new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                            pro_images_back.append(new_img_url.split('/')[-1])
+                            pro_images_back.append(new_img_url)
                             pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                    if pro_images_back:
-                        pro_images_back = '/'.join(pro_images_back)
                 except:
                     pro_images_front = None
                     pro_images_back = None
+                finally:
+                    pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t',"").replace('\r',"").replace('\"', "'")
 
                 _data = {
                     'pro_link': product_info['pro_link'],
@@ -868,7 +862,8 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'e_box p_content borderB_dividers'})) + '\n' + str(soup.find('div', {'class': 'e_box d_DescriptionBoxA p_DescriptionBoxA'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'e_box p_content borderB_dividers'})) + '\n' + str(
+                    soup.find('div', {'class': 'e_box d_DescriptionBoxA p_DescriptionBoxA'}))
             except:
                 pro_jscs_html = None
 
@@ -906,20 +901,19 @@ def parse_detail(product_info, html):
                     # 替换产品图片
                     if pro_jscs_html and replace_list:
                         for img_url in replace_list:
-                            if 'zuiyouliao' in img_url:continue
+                            if 'zuiyouliao' in img_url: continue
                             encode_img_url = format_img_url(product_info, img_url)
                             if not encode_img_url: continue
 
                             hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                             new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                            pro_images_back.append(new_img_url.split('/')[-1])
+                            pro_images_back.append(new_img_url)
                             pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                    if pro_images_back:
-                        pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -956,7 +950,8 @@ def parse_detail(product_info, html):
                 pro_desc = None
 
             try:
-                pro_yyly = soup.find('div', {'id': 'desc3'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').replace('等', '').replace('。', '').strip()
+                pro_yyly = soup.find('div', {'id': 'desc3'}).get_text().replace('\n', '').replace('\t', '').replace(
+                    '\r', '').replace('等', '').replace('。', '').strip()
                 if pro_yyly:
                     pro_yyly = ' | '.join(pro_yyly.split('、'))
             except:
@@ -999,20 +994,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -1041,12 +1035,14 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'product_basic_introduce'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+                pro_desc = soup.find('div', {'class': 'product_basic_introduce'}).get_text().replace('\n', '').replace(
+                    '\t', '').replace('\r', '').strip()
             except:
                 pro_desc = None
 
             try:
-                pro_yyly = [li.get_text() for li in soup.find('div', {'class': 'product_basic_para'}).find_all('li') if '用途' in li.get_text()]
+                pro_yyly = [li.get_text() for li in soup.find('div', {'class': 'product_basic_para'}).find_all('li') if
+                            '用途' in li.get_text()]
                 if pro_yyly:
                     pro_yyly = pro_yyly[0]
                     if '：' in pro_yyly:
@@ -1095,20 +1091,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -1137,7 +1132,9 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'productintro'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+                pro_desc = soup.find('div', {'class': 'productintro'}).get_text().replace('\n', '').replace('\t',
+                                                                                                            '').replace(
+                    '\r', '').strip()
             except:
                 pro_desc = None
 
@@ -1147,7 +1144,8 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'tab-con container'}).find_all('div', {'class': 'con'})[-1])
+                pro_jscs_html = str(
+                    soup.find('div', {'class': 'tab-con container'}).find_all('div', {'class': 'con'})[-1])
             except:
                 pro_jscs_html = None
 
@@ -1183,20 +1181,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -1225,7 +1222,8 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'id': 'banner'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+                pro_desc = soup.find('div', {'id': 'banner'}).get_text().replace('\n', '').replace('\t', '').replace(
+                    '\r', '').strip()
             except:
                 pro_desc = None
 
@@ -1271,20 +1269,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -1313,7 +1310,8 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'fk-editor simpleText fk-editor-break-word'}).get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip()
+                pro_desc = soup.find('div', {'class': 'fk-editor simpleText fk-editor-break-word'}).get_text().replace(
+                    '\n', '').replace('\t', '').replace('\r', '').strip()
             except:
                 pro_desc = None
 
@@ -1359,20 +1357,19 @@ def parse_detail(product_info, html):
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
                         new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
+                        pro_images_back.append(new_img_url)
                         pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -1408,10 +1405,12 @@ def parse_detail(product_info, html):
                             info = h2.find_next('ul')
                         except:
                             info = h2.find_next('span')
-                    else:continue
+                    else:
+                        continue
 
                     try:
-                        pro_desc.append(info.get_text().replace('\n', '').replace('\t','').replace('\r', '').replace('在线咨询联系我们  微信公众号  移动版官网', '').strip())
+                        pro_desc.append(info.get_text().replace('\n', '').replace('\t', '').replace('\r', '').replace(
+                            '在线咨询联系我们  微信公众号  移动版官网', '').strip())
                     except:
                         pass
                 if pro_desc:
@@ -1425,20 +1424,7 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = []
-                for num, h2 in enumerate(soup.find('div', {'id': 'contentvalue100'}).find_all('h2')):
-                    if '参数' in h2.get_text():
-                        pro_jscs_html.append(str(h2))
-                        info = h2.find_next('p')
-                    elif'用途' in str(h2):
-                        pro_jscs_html.append(str(h2))
-                        info = h2.find_next('ul')
-                    else:continue
-                    pro_jscs_html.append(str(info))
-                if pro_jscs_html:
-                    pro_jscs_html = '\n'.join(pro_jscs_html)
-                else:
-                    pro_jscs_html = str(soup.find('div', {'id': 'contentvalue100'}))
+                pro_jscs_html = str(soup.find('div', {'id': 'contentvalue100'}))
             except:
                 pro_jscs_html = None
 
@@ -1446,6 +1432,8 @@ def parse_detail(product_info, html):
                 replace_list = []
                 pro_images_front = []
                 pro_images_back = []
+                pro_video_front = []
+                pro_video_back = []
 
                 try:
                     for img in soup.find('ul', {'id': 'img_list'}).find_all('img'):
@@ -1454,16 +1442,17 @@ def parse_detail(product_info, html):
                             if not isinstance(img_url, str): continue
 
                             new_img_url = format_img_url(product_info, img_url)
-                            if new_img_url and new_img_url not in pro_images_front:
+                            if new_img_url and new_img_url not in pro_images_front and new_img_url not in pro_video_front:
+                                if img_url and img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
+                                        '.pdf') or img_url.endswith('.wbep'):
+                                    pro_images_front.append(new_img_url)
+                                else:
+                                    pro_video_front.append(new_img_url)
                                 replace_list.append(img_url)
-                                pro_images_front.append(new_img_url)
                         except:
                             pass
                 except:
                     pass
-
-                if not pro_images_front:
-                    pro_jscs_html = str(soup.find('div', {'id': 'contentvalue100'}))
 
                 # 替换非产品图片
                 if pro_jscs_html:
@@ -1471,30 +1460,46 @@ def parse_detail(product_info, html):
                     if not_pro_pic_list:
                         for img_url in not_pro_pic_list:
                             new_img_url = format_img_url(product_info, img_url)
-                            if new_img_url and new_img_url not in pro_images_front:
+                            if new_img_url and new_img_url not in pro_images_front and new_img_url not in pro_video_front:
+                                if img_url and img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
+                                        '.pdf') or img_url.endswith('.wbep'):
+                                    pro_images_front.append(new_img_url)
+                                else:
+                                    pro_video_front.append(new_img_url)
                                 replace_list.append(img_url)
-                                pro_images_front.append(new_img_url)
 
                 if pro_images_front:
                     command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+                if pro_video_front:
+                    command_thread(product_info['company_name'], list(set(pro_video_front)), Async=True)
 
                 # 替换产品图片
                 if pro_jscs_html and replace_list:
                     for img_url in replace_list:
-                        if 'zuiyouliao' in img_url:continue
+                        if 'zuiyouliao' in img_url: continue
                         encode_img_url = format_img_url(product_info, img_url)
                         if not encode_img_url: continue
 
                         hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
-                        new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url.split('/')[-1])
-                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-
-                if pro_images_back:
-                    pro_images_back = '/'.join(pro_images_back)
+                        if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith(
+                                '.wmv') or img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith(
+                                '.m4v') or img_url.endswith('.mov'):
+                            hash_mongo = MongoPipeline('video_hash').find_one({'hash_key': hash_key})
+                            if hash_mongo:
+                                new_img_url = hash_mongo.get('video_url_back')
+                                pro_video_back.append(new_img_url)
+                            else:
+                                new_img_url = False
+                        else:
+                            new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
+                            pro_images_back.append(new_img_url)
+                        if new_img_url:
+                            pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
             except:
                 pro_images_front = None
                 pro_images_back = None
+            finally:
+                pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
             _data = {
                 'pro_link': product_info['pro_link'],
@@ -1505,9 +1510,10 @@ def parse_detail(product_info, html):
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': pro_images_back,
+                'pro_video_front': pro_images_front,
+                'pro_video_back': pro_images_back,
                 'status': 1
             }
             return _data
         except Exception as error:
             log_err(error)
-
