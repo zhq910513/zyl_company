@@ -1,0 +1,11 @@
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-04-29 16:26:30 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-04-29 16:26:32 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-04-29 16:26:32 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-04-29 17:18:24 [update_item] 27.150.182.135:27017: [WinError 10054] 远程主机强迫关闭了一个现有的连接。 D:\Projects\zyl_company\dbs\pipelines.py:66

@@ -203,6 +203,13 @@ def format_img_url(product_info, img_url):
                 # /www.njkwls.com/ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
                 else:
                     img_url = f"{scheme}/" + img_url
+            elif str(img_url).startswith('..'):
+                # /ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
+                if product_info['domain'] not in img_url:
+                    img_url = scheme + f"//{product_info['domain']}" + img_url.replace('../', '/')
+                # /www.njkwls.com/ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
+                else:
+                    img_url = scheme + f"//{product_info['domain']}" + img_url.replace('..', '')
             else:
                 # ueditor/net/upload/image/20211029/6377112184815958829319505.jpg
                 if product_info['domain'] not in img_url:

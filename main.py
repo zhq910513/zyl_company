@@ -182,6 +182,6 @@ if __name__ == "__main__":
             # break
         # break
 
-    for pi in MongoPipeline("products").find({"domain" : "www.syntop-ien.com", "pro_jscs_html": ''}):
+    for pi in MongoPipeline("products").find({"domain" : "www.lk.world"}):
         product_detail(pi)
         # break
