@@ -587,7 +587,7 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
-            
+
     if product_info['domain'] == 'www.asiastarpm.com':
         try:
             try:
