@@ -8,6 +8,7 @@
 @time: 2022/4/21 14:17
 """
 import os
+import time
 from os import path
 
 import requests
@@ -71,7 +72,7 @@ def product_list(company_info):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
         }
         resp = requests.get(company_info['company_url'], headers=headers, verify=False)
-        resp.encoding = 'utf-8'
+        resp.encoding = 'gbk'
         if resp.status_code == 200:
             parse_list(company_info, resp.text)
         else:
@@ -88,7 +89,7 @@ def product_detail(product_info):
         }
         print(product_info['pro_link'])
         resp = requests.get(url=product_info['pro_link'], headers=headers, verify=False)
-        resp.encoding = 'utf-8'
+        resp.encoding = 'gbk'
         if resp.status_code == 200:
             _data = parse_detail(product_info, resp.text)
             # print(_data)
@@ -109,7 +110,7 @@ def get_all_category(company_info):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
         }
         resp = requests.get(company_info['company_url'], headers=headers, verify=False)
-        resp.encoding = 'utf-8'
+        resp.encoding = 'gbk'
         if resp.status_code == 200:
             return parse_all_category(company_info, resp.text)
         else:
@@ -122,12 +123,15 @@ def parse_all_category(company_info, html):
     url_list = []
     try:
         soup = BeautifulSoup(html, 'lxml')
-        for li in soup.find('div', {'class': 'cpMuCont'}).find_all('a'):
-            link = li.get('href')
+        for li in soup.find('div', {'class': 'sort_nor'}).find_all('tr'):
+            cate_1_name = li.find('a').get_text().strip()
+            _link = 'http://www.kshrjx.com/' + li.find('a').get('href')
             url_list.append({
                 'company_name': company_info['company_name'],
-                'company_url': link,
-                'cate_1_name': li.get_text().strip()
+                'company_url': _link,
+                'cate_1_name': cate_1_name,
+                'cate_2_name': None,
+                'cate_3_name': None
             })
     except Exception as error:
         log_err(error)
@@ -154,13 +158,18 @@ def parse_all_category_2(company_info, html):
     url_list = []
     try:
         soup = BeautifulSoup(html, 'lxml')
-        for li in soup.find('div', {'class': 'cpMuCont'}).find_all('a'):
-            link = li.get('href')
+        for li in soup.find('div', {'class': 'product_type'}).find_all('li'):
+            _link = li.find('a').get('href')
+            if not str(_link).startswith('http'):
+                link = 'http://www.topstarltd.com' + _link
+            else:
+                link = _link
+            cate_2_name = li.get_text().strip()
             url_list.append({
                 'company_name': company_info['company_name'],
                 'cate_1_name': company_info['cate_1_name'],
                 'company_url': link,
-                'cate_2_name': li.get_text().strip()
+                'cate_2_name': cate_2_name
             })
     except Exception as error:
         log_err(error)
@@ -169,19 +178,31 @@ def parse_all_category_2(company_info, html):
 
 if __name__ == "__main__":
     ci = {
-        'company_name': '张家港市新贝机械有限公司',
-        'company_url': 'https://www.xinbeijx.com/PRODUCT/'
+        'company_name': '昆山恒诚荣机械设备有限公司',
+        'company_url': 'http://www.kshrjx.com/product.asp'
     }
     # product_list(ci)
 
-    # urls = get_all_category(ci)
-    # print(urls)
-    # for url_info in urls:
-    #     for url_info_2 in get_all_category_2(url_info):
+    # urls_1 = get_all_category(ci)
+    # for url_info in urls_1:
+    #     print(url_info)
+    #     product_list(url_info)
+    #     break
+    #     urls_2 = get_all_category_2(url_info)
+    #     print(urls_2)
+    #     for url_info_2 in urls_2:
+    #         print(url_info_2['cate_2_name'])
+    #         # print(url_info_2)
     #         product_list(url_info_2)
-            # break
-        # break
+    #         # break
+    #     # break
 
-    for pi in MongoPipeline("products").find({"domain" : "www.lk.world"}):
-        product_detail(pi)
-        # break
+    while 1:
+        try:
+            for pi in MongoPipeline("products").find({'pro_jscs_html': None}):
+                product_detail(pi)
+                # break
+        except:
+            pass
+
+        time.sleep(60)
