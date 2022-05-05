@@ -1,1 +1,0 @@
-[ERROR] 2022-04-28 18:06:43 [product_detail] ('Connection aborted.', ConnectionResetError(10054, '远程主机强迫关闭了一个现有的连接。', None, 10054, None)) main.py:102
