@@ -1,2 +1,10 @@
 [ERROR] 2022-05-05 01:48:45 [DownloadPicture_Video] HTTPSConnectionPool(host='zshqadmin.zuiyouliao.com', port=443): Read timed out. (read timeout=120) D:\Projects\zyl_company\spiders\download.py:154
 [ERROR] 2022-05-05 01:48:45 [DownloadPicture_Video] https://zshqadmin.zuiyouliao.com/api/information/video/upload D:\Projects\zyl_company\spiders\download.py:155
+[ERROR] 2022-05-05 11:02:22 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-05-05 11:02:22 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-05-05 11:23:37 [DownloadPicture_Video] HTTPSConnectionPool(host='zshqadmin.zuiyouliao.com', port=443): Read timed out. (read timeout=120) D:\Projects\zyl_company\spiders\download.py:154
+[ERROR] 2022-05-05 11:23:37 [DownloadPicture_Video] https://zshqadmin.zuiyouliao.com/api/information/video/upload D:\Projects\zyl_company\spiders\download.py:155
+[ERROR] 2022-05-05 12:55:53 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-05-05 12:55:53 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-05-05 13:01:27 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-05-05 13:01:27 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100

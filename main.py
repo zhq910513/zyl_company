@@ -89,7 +89,7 @@ def product_detail(product_info):
         }
         print(product_info['pro_link'])
         resp = requests.get(url=product_info['pro_link'], headers=headers, verify=False)
-        resp.encoding = 'gbk'
+        resp.encoding = 'utf-8'
         if resp.status_code == 200:
             _data = parse_detail(product_info, resp.text)
             # print(_data)
@@ -197,12 +197,6 @@ if __name__ == "__main__":
     #         # break
     #     # break
 
-    while 1:
-        try:
-            for pi in MongoPipeline("products").find({'pro_jscs_html': None}):
-                product_detail(pi)
-                # break
-        except:
-            pass
-
-        time.sleep(60)
+    for pi in MongoPipeline("products").find({"domain" : "www.fcs.com.tw", "pro_jscs_html": ''}):
+        product_detail(pi)
+        # break
