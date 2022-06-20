@@ -197,6 +197,6 @@ if __name__ == "__main__":
     #         # break
     #     # break
 
-    for pi in MongoPipeline("products").find({"domain" : "www.fcs.com.tw", "pro_jscs_html": ''}):
+    for pi in MongoPipeline("products").find({"company_name" : "新乐华宝塑料机械有限公司","pro_jscs_html" : ""}):
         product_detail(pi)
         # break

@@ -1616,14 +1616,22 @@ def parse_detail(product_info, html):
 
             try:
                 pro_jscs_html = []
-                for p in soup.find('article', {'id': 'pshow'}).find_all('p', {'class': 'MsoNormal'})[1:]:
+                # for p in soup.find('article', {'id': 'pshow'}).find_all('p', {'class': 'MsoNormal'})[1:]:
+                #     pro_jscs_html.append(str(p))
+                # try:
+                #     pro_jscs_html.append(str(soup.find('div', {'align': 'center'})))
+                # except:
+                #     pass
+                # if pro_jscs_html:
+                #     pro_jscs_html = '\n'.join(pro_jscs_html)
+
+                # pro_jscs_html = soup.find('div', {'class': 'prbb_top'})
+
+                for p in soup.find_all('p')[:-1]:
                     pro_jscs_html.append(str(p))
-                try:
-                    pro_jscs_html.append(str(soup.find('div', {'align': 'center'})))
-                except:
-                    pass
-                if pro_jscs_html:
-                    pro_jscs_html = '\n'.join(pro_jscs_html)
+                pro_jscs_html = '\n'.join(pro_jscs_html)
+
+                # pro_jscs_html = """<div class='pro_xxjs'><link href='/css/property.css' rel='stylesheet' type='text/css'/><section class='proshowParameter'><table style=' margin-bottom:20px;'><tbody></tbody></table></section><div><span style='font-size: 14px;'>　　<strong>自动双螺杆挤出主机</strong>主要由两大部分构成：传动部分和挤出部分。<br/> </span></div><div><span style='font-size: 14px;'>　　1、传动部分为螺杆提供扭矩，强劲的扭矩输出是双螺杆挤出机高效工作的保证；挤出部分主要由机筒、螺纹元件和芯轴构成，物料在这个区域内完成塑化、混合并挤出。<br/> </span></div><div><span style='font-size: 14px;'>　　2、其所有技术进步也都集中体现在这两个部分，并构成了双螺杆挤出机更新换代的标志。<br/> </span></div><div><span style='font-size: 14px;'>　　与其他机型相比，它的一大特点就是传动系统的不同。它要求在一个受限的空间内把动力平均地分配到两根螺杆上，这就是扭矩分配技术。不同的扭矩分配技术，决定了齿轮箱的承载能力、甚至于直接影响整机的寿命和性能。<br/> </span></div><div><span style='font-size: 14px;'>　　挤出部分主要由机筒、螺纹元件和芯轴构成，是双螺杆挤出机完成塑化与混合的功能区。螺杆间隙、容积率、转速、芯轴的强度和螺纹元件的寿命是评价双螺杆挤出机挤出部分性能的关键性指标。<br/> </span></div><div><span style='font-size: 14px;'>　　<strong>使用注意事项：</strong><br/> </span></div><div><span style='font-size: 14px;'>　　1、塑料片材生产设备机筒上各段温度由加料段开始至机筒与成型模具连接处温度逐渐提高。<br/> </span></div><div><span style='font-size: 14px;'>　　2、成型模具温度略高于机筒温度。高出温度控制在5---10℃。模具两端温度略高于模具中何温度，高出温度控制在5-10℃。<br/> </span></div><div><span style='font-size: 14px;'>　　3、入片形式，三辊的中间辊上辊面应与模具唇口下平面在一个水平面上;唇口端面与中间辊中心线平行，相距50~100mm。<br/> </span></div><div><span style='font-size: 14px;'>　　4、模具唇口间隙应略小于或等于板制品厚度，模唇中间间隙应略小于两侧端模唇间隙。<br/> </span></div><div><span style='font-size: 14px;'>　　5、注意三辊工作面粗糙度R应不大于0. 2pm。清理辊面时不许用硬钢刀刮划辊面，应使用铜质刀清理辊面残料。<br/> </span></div><div><span style='font-size: 14px;'>　　6、辊面应有一些中高度;三辊间的间隙应等于或略大于板的厚度。<br/> </span></div><div><span style='font-size: 14px;'>　　7、成型模具温度控制要稳定。温度高时熔料在模具内流动速度变快;温度低时熔料在模具内流动速度变慢。不稳定的熔料流速会造成板(片)制品的纵向厚度误差大。<br/> </span></div><div><span style='font-size: 14px;'>　　8、注意控制三辊的工作面温度，应是进片辊温度略高些，出片辊温度略低些。辊面温度偏高，板坯不易脱辊，制品表面易产生横纹;温度偏低，制品表面不光泽。根据此现象，辊面温度控制要及时调整。<br/> </span></div><div><span style='font-size: 14px;'>　　<strong>自动双螺杆挤出主机</strong><strong>保养和维护：</strong><br/> </span></div><div><span style='font-size: 14px;'>　　1、在使用时，如果物料温度达不到启动时设定的温度，保温时间达不到标准，绝对不允许启动和运行螺杆，这是我们必须注意的。<br/> </span></div><div><span style='font-size: 14px;'>　　2、在正常使用或出现异常情况时，一旦设备出现任何异常响声，需要立即停止设备运行，并及时向相关人员报告，让专业维修人员尽快前来处理。<br/> </span></div><div><span style='font-size: 14px;'>　　3、即使操作正确，也不能掉以轻心。我们必须时刻注意生产过程中的安全。必要的消防设备需要放置在使用导热油的设备附近。</span></div></div>"""
             except:
                 pro_jscs_html = None
 
