@@ -2480,7 +2480,6 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
-    # www.victorpm.com 数据问题
     if product_info['domain'] == "www.victorpm.com":
         try:
             try:
@@ -2494,14 +2493,11 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'elementor-section-wrap'}).find_next('section')
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = []
-                for div in soup.find('div', {'class': 'post-content'}).find_all('div', {'class': 'elementor-container elementor-column-gap-default'})[2].find_all('figcaption'):
-                    pro_yyly.append(div.get_text())
+                for section in soup.find('div', {'class': 'post-content'}).find_all('section'):
+                    if '应用领域' in str(section):
+                        for figcaption in section.find_all('figcaption'):
+                            pro_yyly.append(figcaption.get_text().strip())
                 if pro_yyly:
                     pro_yyly = ' | '.join(pro_yyly)
             except:
@@ -2509,8 +2505,10 @@ def parse_detail(product_info, html):
 
             try:
                 pro_jscs_html = []
-                for p in soup.find('div', {'class': 'post-content'}).find_all('div', {'class': 'elementor-container elementor-column-gap-default'})[1:3]:
-                    pro_jscs_html.append(str(p))
+                # for div in soup.find('div', {'class': 'post-content'}).find_all('div', {'class': 'elementor-container elementor-column-gap-no'}):
+                div = soup.find('div', {'class': 'post-content'}).find_all('div', {'class': 'elementor-container elementor-column-gap-default'})[-2]
+                if '产品详情' in str(div):
+                    pro_jscs_html.append(str(div))
                 if pro_jscs_html:
                     pro_jscs_html = '\n'.join(pro_jscs_html)
             except:
@@ -2525,10 +2523,13 @@ def parse_detail(product_info, html):
 
                 # 收集产品图
                 try:
-                    for img in soup.find('div', {'class': 'post-content'}).find_all('div', {'class': 'elementor-container elementor-column-gap-default'})[0].find_all('div', {'class': 'elementor-widget-container'})[-1].find_all('img'):
+                    # for img in soup.find('div', {'class': 'post-content'}).find_all('div', {'class': 'elementor-container elementor-column-gap-default'})[0].find_all('div', {'class': 'elementor-widget-container'})[-1].find_all('img'):
+                    # for img in soup.find('div', {'class': 'post-content'}).find_all('figure'):
+                    for img in soup.find('div', {'class': 'post-content'}).find_all('div', {'class': 'elementor-widget-container'}):
                         try:
-                            img_url = img.get('src')
+                            img_url = img.find('img').get('data-lazy-src')
                             if not isinstance(img_url, str): continue
+                            if 'production' not in img_url: continue
 
                             new_img_url = format_img_url(product_info, img_url.strip())
                             if not new_img_url: continue
@@ -2536,8 +2537,9 @@ def parse_detail(product_info, html):
                                 if img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
                                         '.pdf') or img_url.endswith('.wbep'):
                                     pro_images_front.append(new_img_url)
-                                else:
+                                elif img_url.endswith('.mp4'):
                                     pro_video_front.append(new_img_url)
+                                else:pass
                                 if img_url not in replace_list:
                                     replace_list.append(img_url)
                         except:
@@ -2557,16 +2559,18 @@ def parse_detail(product_info, html):
                                 if not_img_url.endswith('.jpg') or not_img_url.endswith('.png') or not_img_url.endswith(
                                         '.pdf') or not_img_url.endswith('.wbep'):
                                     pro_images_front.append(new_img_url)
-                                else:
+                                elif not_img_url.endswith('.mp4'):
                                     pro_video_front.append(new_img_url)
+                                else:
+                                    pass
                                 if not_img_url not in replace_list:
                                     replace_list.append(not_img_url)
 
-                ## 下载
+                # 下载
                 if pro_images_front:
-                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+                    command_thread(product_info['company_name'], list(set(pro_images_front)))
                 if pro_video_front:
-                    command_thread(product_info['company_name'], list(set(pro_video_front)), Async=True)
+                    command_thread(product_info['company_name'], list(set(pro_video_front)))
 
                 # 替换
                 if pro_jscs_html and replace_list:
@@ -2607,7 +2611,7 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
+                # 'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
@@ -3100,6 +3104,7 @@ def parse_detail(product_info, html):
                         try:
                             img_url = img.get('src')
                             if not isinstance(img_url, str): continue
+                            if '/image' not in img_url: continue
 
                             new_img_url = format_img_url(product_info, img_url.strip())
                             if not new_img_url: continue

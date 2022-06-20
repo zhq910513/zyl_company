@@ -17,7 +17,8 @@ from common.log_out import log_err
 from dbs.pipelines import MongoPipeline
 from spiders.product_detail import parse_detail
 from spiders.product_list import parse_list
-
+import pprint
+pp=pprint.PrettyPrinter(indent=4)
 requests.packages.urllib3.disable_warnings()
 
 picHeaders = {
@@ -92,7 +93,7 @@ def product_detail(product_info):
         resp.encoding = 'utf-8'
         if resp.status_code == 200:
             _data = parse_detail(product_info, resp.text)
-            # print(_data)
+            pp.pprint(_data)
             html_css = _data.get('pro_jscs_html')
             if html_css:
                 html_css = html_css.replace('\"', "'")
@@ -197,6 +198,6 @@ if __name__ == "__main__":
     #         # break
     #     # break
 
-    for pi in MongoPipeline("products").find({"company_name" : "新乐华宝塑料机械有限公司","pro_jscs_html" : ""}):
+    for pi in MongoPipeline("products").find({"domain" : "www.tongjia.com"}):
         product_detail(pi)
         # break
