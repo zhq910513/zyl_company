@@ -1,0 +1,94 @@
+[ERROR] 2022-06-22 00:37:23 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 00:37:23 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 00:37:23 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3082
+[ERROR] 2022-06-22 00:37:23 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 00:38:38 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 00:38:38 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 00:50:15 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3082
+[ERROR] 2022-06-22 00:50:15 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 01:07:41 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 01:47:46 [DownloadPicture_Video] ("Connection broken: InvalidChunkLength(got length b'', 0 bytes read)", InvalidChunkLength(got length b'', 0 bytes read)) D:\Projects\zyl_company\spiders\download.py:106
+[ERROR] 2022-06-22 01:47:46 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 01:47:46 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 01:48:26 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 01:48:26 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 01:48:34 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 01:48:34 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 01:50:50 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 01:50:50 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 01:52:22 [DownloadPicture_Video] ("Connection broken: InvalidChunkLength(got length b'', 0 bytes read)", InvalidChunkLength(got length b'', 0 bytes read)) D:\Projects\zyl_company\spiders\download.py:106
+[ERROR] 2022-06-22 01:53:52 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 01:53:52 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 01:55:51 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 01:55:51 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:03:47 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:03:47 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:03:55 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:03:55 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:07:10 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 02:07:10 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 02:07:10 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:07:10 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:08:16 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 02:08:16 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 02:08:17 [DownloadPicture_Video] HTTPConnectionPool(host='27.150.182.135', port=8855): Read timed out. (read timeout=60) D:\Projects\zyl_company\spiders\download.py:99
+[ERROR] 2022-06-22 02:08:17 [DownloadPicture_Video] http://27.150.182.135:8855/api/common/upload?composeId=0&type=3&isNameReal=0 D:\Projects\zyl_company\spiders\download.py:100
+[ERROR] 2022-06-22 02:08:17 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:08:17 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:08:26 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:08:26 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:08:40 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:08:40 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:08:41 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:08:41 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:08:56 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:08:56 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:11:40 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:11:40 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:11:44 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:11:44 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:11:46 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:11:46 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:11:49 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:11:49 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:11:52 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:11:52 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:11:54 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:11:54 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:11:58 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:11:58 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:22:56 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:22:56 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:23:00 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:23:00 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:23:04 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:23:04 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:23:18 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:23:18 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:23:19 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:23:19 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:23:32 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:23:32 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:24:55 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:24:55 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:25:01 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:25:01 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:25:03 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:25:03 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:25:06 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:25:06 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:25:08 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:25:08 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:25:20 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:25:20 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
+[ERROR] 2022-06-22 02:25:23 [parse_detail] 'NoneType' object has no attribute 'replace' D:\Projects\zyl_company\spiders\product_detail.py:3647
+[ERROR] 2022-06-22 02:25:23 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104

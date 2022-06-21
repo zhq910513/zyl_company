@@ -2400,21 +2400,23 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'fk-editor simpleText fk-editor-break-word'}).get_text().replace(
-                    '\n', '').replace('\t', '').replace('\r', '').strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = None
             except:
                 pro_yyly = None
 
             try:
+                desc = ''
+                for div in soup.find_all('div', {'class': 'fk-editor simpleText fk-editor-break-word'}):
+                    if ' 性能和优点' in str(div):
+                        desc = str(div)
+                        break
+
                 pro_jscs_html = '\n'.join([
                     str(soup.find('div', {'_modulestyle': '1'}).find_next('div', {'_modulestyle': '79'})),
                     str(soup.find('div', {'_modulestyle': '1'}))
                 ])
+                if desc:
+                    pro_jscs_html = desc + '\n' + pro_jscs_html
             except:
                 pro_jscs_html = ''
 
@@ -2466,11 +2468,24 @@ def parse_detail(product_info, html):
                                                                                                             "'").replace(
                     'data-original', "src")
 
+            try:
+                weight = 0
+                size = 0
+                for tr in soup.find('div', {'class': 'pd_propTable'}).find_all('tr'):
+                    if '重量' in str(tr):
+                        weight = tr.find_all('td')[-1].get_text().strip()
+                    if '尺寸' in str(tr):
+                        size = tr.find_all('td')[-1].get_text().strip()
+            except:
+                weight = 0
+                size = 0
+
             _data = {
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
+                'weight': weight,
+                'size': size,
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
@@ -2919,18 +2934,16 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'col-md-4'}).find('ul').get_text().strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = soup.find('div', {'class': 'rqq_content'}).find('div', {'class': 'vc_tta-container'})\
                     .find('div', {'class': 'vc_tta-panel-body'}).get_text()
             except:
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'rqq_content'}).find('div', {'class': 'vc_tta-container'}))
+                pro_jscs_html = str(soup.find('div', {'class': 'col-md-4'}))
+                # pro_jscs_html = str(soup.find_all('div', {'class': 'wpb_text_column wpb_content_element'})[1])
+                # if pro_desc:
+                #     pro_jscs_html = pro_desc + '\n' + pro_jscs_html
             except:
                 pro_jscs_html = None
 
@@ -2968,13 +2981,11 @@ def parse_detail(product_info, html):
                     for img in soup.find('div', {'class': 'download'}).find_all('a'):
                         try:
                             img_url = img.get('href')
-                            print(img_url)
                             if not str(img_url).endswith('.pdf') and not str(img_url).endswith('.PDF'):
                                 img_url += quote(img.get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip())
                             if not isinstance(img_url, str): continue
                             if str(img_url).endswith('.PDF'):
                                 img_url = img_url.split('.PDF')[0] + '.pdf'
-                            print(img_url)
                             new_img_url = format_img_url(product_info, img_url.strip())
                             if not new_img_url: continue
                             if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
@@ -3052,7 +3063,6 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
@@ -3495,17 +3505,16 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'prod_top'}).get_text().strip().split('\n')[-1].strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = None
             except:
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'prod_feature'}))
+                text = str(soup.find("div", {"class": "prod_top"}).get_text().split("\n")[-1])
+                pro_desc = f'<div class="tab-content">{text}</div>'
+                pro_jscs_html = str(soup.find('div', {'class': 'prod_feature'}).find('ul'))
+                if pro_desc:
+                    pro_jscs_html = pro_desc + '\n' + pro_jscs_html
             except:
                 pro_jscs_html = None
 
@@ -3625,7 +3634,6 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
