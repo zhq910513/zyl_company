@@ -172,6 +172,7 @@ def command_thread(company_name, image_list, Async=True):
     pool = ThreadPool(processes=8)
 
     for img_url in image_list:
+        print('----------------', img_url)
         file_path = os.path.abspath(image_base_path + f'/download_data/{company_name}')
         if not os.path.exists(file_path):
             os.makedirs(file_path)

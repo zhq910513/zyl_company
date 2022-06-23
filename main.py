@@ -181,9 +181,9 @@ def parse_all_category_2(company_info, html):
 
 if __name__ == "__main__":
     # ci = {
-    #     "company_name": "广东乐善智能装备股份有限公司",
-    #     "company_url": "https://www.china-leshan.com/list-180-3.html",
-    #     "cate_1_name": "吹瓶机模具"
+    #     "company_name": "广东伊之密精密机械股份有限公司",
+    #     "company_url": "https://www.yizumi.com/cn/flex/subproducts",
+    #     "cate_1_name": "SpaceA工业3D打印机"
     # }
     # product_list(ci)
 
@@ -201,6 +201,6 @@ if __name__ == "__main__":
     #         # break
     #     # break
 
-    for pi in MongoPipeline("products").find({"company_name" : "富強鑫精密工業股份有限公司"}).skip(1):
+    for pi in MongoPipeline("products").find({"company_name" : "广东伊之密精密机械股份有限公司"}):
         product_detail(pi)
-        # break
+        break

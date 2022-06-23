@@ -532,8 +532,9 @@ def parse_list(company_info, html):
                 except Exception as error:
                     log(error)
         if domain == "www.yizumi.com":
+            cate_1_name = company_info['cate_1_name']
             for num, li in enumerate(soup.find('div', {'class': 'caste_2-top'}).find_all('li'),start=1):
-                cate_1_name = li.find('a').get_text().strip()
+                cate_2_name = li.find('a').get_text().strip()
                 info = soup.find('div', {'class': 'caste_2-main'}).find_all('ul')[num]
                 if info:
                     for info_li in info.find_all('li'):
@@ -545,9 +546,9 @@ def parse_list(company_info, html):
                                 'company_url': company_info['company_url'],
                                 'domain': domain,
                                 'cate_1_name': cate_1_name,
-                                'cate_2_name': None,
+                                'cate_2_name': cate_2_name,
                                 'cate_3_name': None,
-                                'categories': f'{cate_1_name}',
+                                'categories': f'{cate_1_name}-{cate_2_name}',
                                 'pro_name': pro_name,
                                 'pro_link': pro_link
                             }
