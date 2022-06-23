@@ -2818,17 +2818,28 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'pageCon proDpage'}).get_text().strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = None
+                for div in soup.find('div', {'class': 'pro2 bghui'}).find_all('div', {'class': 'col-md-6'}):
+                    if '应用' in str(div.find_all('h3')[-1]):
+                        pro_yyly = div.find_all('p')[-1].get_text().strip()
             except:
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'pinner content-page'}))
+                pro_jscs_html = []
+                for div in soup.find_all('div', {'class': 'pro2'}):
+                    if 'bghui' in str(div):continue
+                    try:
+                        if '机器特点' in str(div):
+                            pro_jscs_html.append(str(div))
+                        elif div.find('table'):
+                            pro_jscs_html.append(str(div))
+                        elif not div.find('div', {'class': 'title'}):
+                            pro_jscs_html.append(str(div))
+                    except:
+                        pass
+                if pro_jscs_html:
+                    pro_jscs_html = '\n'.join(pro_jscs_html)
             except:
                 pro_jscs_html = None
 
@@ -2841,9 +2852,9 @@ def parse_detail(product_info, html):
 
                 # 收集产品图
                 try:
-                    for img in soup.find('div', {'id': 'procon3'}).find_all('img'):
+                    for img in soup.find_all('div', {'class': 'box'}):
                         try:
-                            img_url = img.get('src')
+                            img_url = img.find('img').get('src')
                             if not isinstance(img_url, str): continue
 
                             new_img_url = format_img_url(product_info, img_url.strip())
@@ -2923,7 +2934,6 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
@@ -4168,11 +4178,6 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'listbox'}).get_text().strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = []
                 for div in soup.find('div', {'class': 'listbox'}).find_all('div'):
                     if '产品用途' in div.get_text():
@@ -4183,7 +4188,23 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('ul', {'class': 'productView-section2-tab clearfix'})) + '\n' + str(soup.find('div', {'class': 'productView-section2-content-swiper'}))
+                pro_jscs_html = []
+                try:
+                    pro_desc = soup.find('div', {'class': 'listbox'})
+                    if pro_desc:
+                        pro_jscs_html.append(str(pro_desc))
+                except:
+                    pass
+
+                try:
+                    pro_detail = soup.find('div', {'class': 'productView-section2-content open'})
+                    if pro_detail:
+                        pro_jscs_html.append(str(pro_detail))
+                except:
+                    pass
+
+                if pro_jscs_html:
+                    pro_jscs_html = '\n'.join(pro_jscs_html)
             except:
                 pro_jscs_html = None
 
@@ -4299,17 +4320,33 @@ def parse_detail(product_info, html):
             finally:
                 pro_jscs_html = pro_jscs_html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
 
+            try:
+                pro_type = None
+                for div in soup.find('div', {'class': 'listbox'}).find_all('div'):
+                    if '型号' in str(div):
+                        print('div')
+                        pro_type = div.get_text().split('：')[1].strip().strip()
+                        break
+            except:
+                pro_type = None
+
+            try:
+                pro_model = soup.find('div', {'class': 'rightbox'}).find('h4').get_text().split(' ')[0]
+            except:
+                pro_model = None
+
             _data = {
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
                 'pro_images_back': pro_images_back,
                 'pro_video_front': pro_video_front,
                 'pro_video_back': pro_video_back,
+                'pro_type': pro_type,
+                'pro_model': pro_model,
                 'status': 1
             }
             return _data
@@ -4328,17 +4365,28 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'col-md-12 pl-0'}).get_text().strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = None
             except:
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'bs-example tooltip-demo'}))
+                pro_jscs_html = []
+                try:
+                    for div in soup.find_all('div', {'class': 'col-md-12'}):
+                        if '介绍' in str(div):
+                            pro_jscs_html.append(str(div.find('div', {'class': 'col-md-12 pl-0'})))
+                except:
+                    pass
+
+                try:
+                    for div in soup.find_all('div', {'class': 'col-md-12'}):
+                        if '特点' in str(div):
+                            pro_jscs_html.append(str('<h2 class="font-black font20 m-bottom2">特点</h2>') + str(div.find('div', {'class': 'bs-example tooltip-demo'})))
+                except:
+                    pass
+
+                if pro_jscs_html:
+                    pro_jscs_html = '\n'.join(pro_jscs_html)
             except:
                 pro_jscs_html = None
 
@@ -4374,8 +4422,7 @@ def parse_detail(product_info, html):
                 # 收集下载
                 try:
                     try:
-                        img_url = soup.find('div', {'class': 'col-md-12 product_detail button'}).find_all('a')[1].get('href')
-
+                        img_url = soup.find('div', {'class': 'col-md-12 product_detail button'}).find('a', {'title': '目录下载'}).get('href')
                         if str(img_url).startswith('../'):
                             img_url = img_url.replace('../', 'https://www.fcs.com.tw/').split('&name')[0]
                         if str(img_url).endswith('.pdf'):
@@ -4457,7 +4504,6 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,

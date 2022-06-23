@@ -1,7 +1,7 @@
 from dbs.pipelines import MongoPipeline
 
 replace_text = """<i>/ Product parameter</i>"""
-for num, info in enumerate(MongoPipeline('products').find({"company_name" : "东莞信易电热机械有限公司"})):
+for num, info in enumerate(MongoPipeline('products').find({"company_name" : "富強鑫精密工業股份有限公司"})):
     # _html = info['pro_jscs_html']
     # _html = _html.replace('\n', "").replace('\t', "").replace('\r', "").replace('\"', "'")
     MongoPipeline('products').update_item({'_id': None}, {

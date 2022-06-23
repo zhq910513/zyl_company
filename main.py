@@ -180,11 +180,12 @@ def parse_all_category_2(company_info, html):
 
 
 if __name__ == "__main__":
-    ci = {
-        'company_name': '江苏贝尔机械有限公司',
-        'company_url': 'https://www.beierpm.com/pro4/'
-    }
-    product_list(ci)
+    # ci = {
+    #     "company_name": "广东乐善智能装备股份有限公司",
+    #     "company_url": "https://www.china-leshan.com/list-180-3.html",
+    #     "cate_1_name": "吹瓶机模具"
+    # }
+    # product_list(ci)
 
     # urls_1 = get_all_category(ci)
     # for url_info in urls_1:
@@ -200,6 +201,6 @@ if __name__ == "__main__":
     #         # break
     #     # break
 
-    # for pi in MongoPipeline("products").find({"company_name" : "广东金明精机股份有限公司", 'pro_jscs_html': None}):
-    #     product_detail(pi)
+    for pi in MongoPipeline("products").find({"company_name" : "富強鑫精密工業股份有限公司"}).skip(1):
+        product_detail(pi)
         # break
