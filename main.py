@@ -73,7 +73,7 @@ def product_list(company_info):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
         }
         resp = requests.get(company_info['company_url'], headers=headers, verify=False)
-        resp.encoding = 'gbk'
+        resp.encoding = 'utf-8'
         if resp.status_code == 200:
             parse_list(company_info, resp.text)
         else:
@@ -111,13 +111,14 @@ def get_all_category(company_info):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
         }
         resp = requests.get(company_info['company_url'], headers=headers, verify=False)
-        resp.encoding = 'gbk'
+        resp.encoding = 'utf-8'
         if resp.status_code == 200:
             return parse_all_category(company_info, resp.text)
         else:
             print(resp.status_code)
     except Exception as error:
         log_err(error)
+
 
 # 解析所有分类
 def parse_all_category(company_info, html):
@@ -154,6 +155,7 @@ def get_all_category_2(company_info):
     except Exception as error:
         log_err(error)
 
+
 # 解析所有分类
 def parse_all_category_2(company_info, html):
     url_list = []
@@ -179,10 +181,10 @@ def parse_all_category_2(company_info, html):
 
 if __name__ == "__main__":
     ci = {
-        'company_name': '昆山恒诚荣机械设备有限公司',
-        'company_url': 'http://www.kshrjx.com/product.asp'
+        'company_name': '江苏贝尔机械有限公司',
+        'company_url': 'https://www.beierpm.com/pro4/'
     }
-    # product_list(ci)
+    product_list(ci)
 
     # urls_1 = get_all_category(ci)
     # for url_info in urls_1:
@@ -198,6 +200,6 @@ if __name__ == "__main__":
     #         # break
     #     # break
 
-    for pi in MongoPipeline("products").find({"company_name" : "东莞信易电热机械有限公司", "pro_jscs_html" : ""}):
-        product_detail(pi)
+    # for pi in MongoPipeline("products").find({"company_name" : "广东金明精机股份有限公司", 'pro_jscs_html': None}):
+    #     product_detail(pi)
         # break

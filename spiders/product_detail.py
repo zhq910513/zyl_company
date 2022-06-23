@@ -428,12 +428,6 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'mb-60'}).get_text().replace('\n', '').replace('\t', '').replace(
-                    '\r', '').strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = ' | '.join(
                     [item.get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip() for item in
                      soup.find('section', {'class': 'applications mt-60 mb-90'}).find_all('div', {'class': 'item'})])
@@ -441,8 +435,29 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('section', {'class': 'mt-90 mb-90'})) + '\n' + str(
-                    soup.find('section', {'class': 'mt-90 pb-45 pt-90 bg-lightgray'}))
+                pro_jscs_html = []
+                try:
+                    desc = soup.find('div', {'class': 'mb-60'})
+                    if desc:
+                        pro_jscs_html.append(str(desc))
+                except:
+                    pass
+                try:
+                    bujian = soup.find('section', {'class': 'mt-90 mb-90'})
+                    if bujian:
+                        pro_jscs_html.append(str(bujian))
+                except:
+                    pass
+                try:
+                    table = soup.find('section', {'class': 'mt-90 pb-45 pt-90 bg-lightgray'})
+                    if table:
+                        pro_jscs_html.append(str(table))
+                except:
+                    pass
+                if pro_jscs_html:
+                    pro_jscs_html = '\n'.join(pro_jscs_html)
+                else:
+                    pro_jscs_html = None
             except:
                 pro_jscs_html = None
 
@@ -497,7 +512,6 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,

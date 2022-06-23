@@ -105,60 +105,30 @@ def parse_list(company_info, html):
                         except:
                             continue
         if domain == "www.jmjj.com":
-            for li in soup.find_all('li', {'class': 'nav-item'}):
+            for num, li in enumerate(soup.find('ul', {'id': 'pills-tab'}).find_all('li', {'class': 'nav-item'})):
                 try:
-                    if li.find('a', {'id': 'product-list'}):
-                        for num, cate_li in enumerate(
-                                li.find('div', {'id': 'product-dropdown'}).find('ul', {'id': 'pills-tab'}).find_all(
-                                    'li')):
-                            cate_1_name = cate_li.find('a').get_text().replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                                   '').strip()
-                            cate_2_info = li.find('div', {'id': 'product-dropdown'}).find('div', {
-                                'id': f'product-{num}-content'})
-
-                            for item in cate_2_info.find_all('div', {'class': 'item'}):
-                                cate_2_name = item.find('a', {'class': 'product_sub'}).get('title').replace('\n',
-                                                                                                            '').replace(
-                                    '\t', '').replace('\r', '').strip()
-
-                                for cate_3_info in item.find_all('li', {'class': 'mb-20'}):
-                                    cate_3_name = cate_3_info.find('h4').get_text().replace('\n', '').replace('\t',
-                                                                                                              '').replace(
-                                        '\r', '').strip()
-
-                                    for pro_info in cate_3_info.find_all('a'):
-                                        pro_name = pro_info.get_text().replace('\n', '').replace('\t', '').replace('\r',
-                                                                                                                   '').strip()
-                                        pro_link = pro_info.get('href')
-                                        if not str(pro_link).startswith('https:'):
-                                            pro_link = 'https:' + pro_link
-
-                                        if cate_3_name in cate_2_name:
-                                            pro_data = {
-                                                'company_name': company_info['company_name'],
-                                                'company_url': company_info['company_url'],
-                                                'domain': domain,
-                                                'cate_1_name': cate_1_name,
-                                                'cate_2_name': cate_2_name,
-                                                'cate_3_name': None,
-                                                'categories': f'{cate_1_name}-{cate_2_name}',
-                                                'pro_name': pro_name,
-                                                'pro_link': pro_link
-                                            }
-                                        else:
-                                            pro_data = {
-                                                'company_name': company_info['company_name'],
-                                                'company_url': company_info['company_url'],
-                                                'domain': domain,
-                                                'cate_1_name': cate_1_name,
-                                                'cate_2_name': cate_2_name,
-                                                'cate_3_name': cate_3_name,
-                                                'categories': f'{cate_1_name}-{cate_2_name}-{cate_3_name}',
-                                                'pro_name': pro_name,
-                                                'pro_link': pro_link
-                                            }
-                                        MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None},
-                                                                              pro_data)
+                    cate_1_name = li.get_text().strip()
+                    li_content = soup.find('div', {'id': 'pills-tabContent'}).find_all('div', {'class': 'products-links'})[num]
+                    for item in li_content.find_all('div', {'class': 'item'}):
+                        cate_2_name = item.find('div', {'class': 'product_sub'}).get_text().strip()
+                        for item_li in li_content.find_all('li'):
+                            cate_3_name = item_li.find('h4').get_text().strip()
+                            for a in item_li.find_all('a'):
+                                pro_name = a.get_text().strip()
+                                pro_link = 'https:' + a.get('href')
+                                pro_data = {
+                                    'company_name': company_info['company_name'],
+                                    'company_url': company_info['company_url'],
+                                    'domain': domain,
+                                    'cate_1_name': cate_1_name,
+                                    'cate_2_name': cate_2_name,
+                                    'cate_3_name': cate_3_name,
+                                    'categories': f'{cate_1_name}-{cate_2_name}-{cate_3_name}',
+                                    'pro_name': pro_name,
+                                    'pro_link': pro_link
+                                }
+                                print(pro_data)
+                                MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
                 except Exception as error:
                     log(error)
         if domain == "faygoplast.cn":
@@ -586,19 +556,47 @@ def parse_list(company_info, html):
                         except Exception as error:
                             log(error)
         if domain == "www.beierpm.com":
-            cate_1_name = company_info['cate_1_name']
-            for li in soup.find('div', {'class': 'proList'}).find_all('li'):
+            # for li in soup.find('div', {'class': 'list'}).find_all('li'):
+            #     cate_1_name = '板片材生产设备'
+            #     try:
+            #         pro_name = []
+            #         # e = li.find('div', {'class': 'e'}).get_text().strip()
+            #         # if e:
+            #         #     pro_name.append(e)
+            #         t = li.find('b', {'class': 't'}).get_text().strip()
+            #         if t:
+            #             pro_name.append(t)
+            #         if pro_name:
+            #             pro_name = ' '.join(pro_name)
+            #         pro_link = li.find('a').get('href')
+            #         pro_data = {
+            #             'company_name': company_info['company_name'],
+            #             'company_url': company_info['company_url'],
+            #             'domain': domain,
+            #             'cate_1_name': cate_1_name,
+            #             'cate_2_name': None,
+            #             'cate_3_name': None,
+            #             'categories': f'{cate_1_name}',
+            #             'pro_name': pro_name,
+            #             'pro_link': pro_link
+            #         }
+            #         print(pro_data)
+            #         MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+            #     except Exception as error:
+            #         log(error)
+            for li in soup.find('div', {'class': 'pro1 bghui'}).find_all('div', {'class': 'service-block-one1 col-lg-4 col-md-6'}):
+                # cate_1_name = '清洗回收设备'
                 try:
-                    pro_name = li.find('div', {'class': 'name'}).get_text().replace('\n', '').replace('\t', '').strip()
+                    pro_name = li.find('h4').get_text().strip()
                     pro_link = li.find('a').get('href')
                     pro_data = {
                         'company_name': company_info['company_name'],
                         'company_url': company_info['company_url'],
                         'domain': domain,
-                        'cate_1_name': cate_1_name,
+                        'cate_1_name': pro_name,
                         'cate_2_name': None,
                         'cate_3_name': None,
-                        'categories': f'{cate_1_name}',
+                        'categories': f'{pro_name}',
                         'pro_name': pro_name,
                         'pro_link': pro_link
                     }
@@ -606,6 +604,26 @@ def parse_list(company_info, html):
                     MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
                 except Exception as error:
                     log(error)
+            # for li in soup.find('div', {'class': 'pro1 hui'}).find_all('div', {'class': 'service-block-one1 col-lg-4 col-md-6'}):
+            #     cate_1_name = '塑料造粒机'
+            #     try:
+            #         pro_name = li.find('h4').get_text().strip()
+            #         pro_link = li.find('a').get('href')
+            #         pro_data = {
+            #             'company_name': company_info['company_name'],
+            #             'company_url': company_info['company_url'],
+            #             'domain': domain,
+            #             'cate_1_name': cate_1_name,
+            #             'cate_2_name': None,
+            #             'cate_3_name': None,
+            #             'categories': f'{cate_1_name}',
+            #             'pro_name': pro_name,
+            #             'pro_link': pro_link
+            #         }
+            #         print(pro_data)
+            #         # MongoPipeline('products').update_item({'pro_link': None, 'pro_name': None}, pro_data)
+            #     except Exception as error:
+            #         log(error)
         if domain == "www.dekuma.com":
             cate_1_name = company_info['cate_1_name']
             for li in soup.find('ul', {'class': 'products columns-4'}).find_all('li'):
