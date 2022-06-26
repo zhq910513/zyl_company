@@ -20,6 +20,7 @@ from spiders.download import command_thread, format_img_url, serverUrl
 # 解析详细内容
 def parse_detail(product_info, html):
     soup = BeautifulSoup(html, 'lxml')
+    ##
     if product_info['domain'] == 'www.oubeitejx.com':
         try:
             try:
@@ -32,11 +33,11 @@ def parse_detail(product_info, html):
             except:
                 series = None
 
-            try:
-                pro_desc = soup.find('div', {'class': 'show_property'}).find('p').get_text().replace('\n', '').replace(
-                    '\t', '').replace('\r', '').replace('产品简介：', '').strip()
-            except:
-                pro_desc = None
+            # try:
+            #     pro_desc = soup.find('div', {'class': 'show_property'}).find('p').get_text().replace('\n', '').replace(
+            #         '\t', '').replace('\r', '').replace('产品简介：', '').strip()
+            # except:
+            #     pro_desc = None
 
             try:
                 pro_yyly = None
@@ -44,51 +45,81 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find('div', {'class': 'show_property'})) + '\n' + str(
-                    soup.find('div', {'class': 'content_body'}))
+                pro_jscs_html = []
+                pro_desc = str(soup.find('div', {'class': 'show_property'}).find('p')).replace('产品简介：', '')
+                if pro_desc:
+                    pro_jscs_html.append(pro_desc)
+                pro_detail = str(soup.find('div', {'class': 'content_body'}))
+                if pro_detail:
+                    pro_jscs_html.append(pro_detail)
+                if pro_jscs_html:
+                    pro_jscs_html = '\n'.join(pro_jscs_html)
+                else:
+                    pro_jscs_html = ''
             except:
-                pro_jscs_html = None
+                pro_jscs_html = ''
 
             try:
+                urls = []
                 replace_list = []
                 pro_images_front = []
                 pro_images_back = []
-
-                for img in soup.find('div', {'class': 'show_gallery'}).find_all('img'):
-                    try:
-                        img_url = img.get('src')
-                        if not isinstance(img_url, str): continue
-
-                        new_img_url = format_img_url(product_info, img_url)
-                        if new_img_url and new_img_url not in pro_images_front:
-                            replace_list.append(img_url)
-                            pro_images_front.append(new_img_url)
-                    except:
-                        pass
+                pro_video_front = []
+                pro_video_back = []
 
                 # 替换非产品图片
-                not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
-                if not_pro_pic_list:
-                    for img_url in not_pro_pic_list:
-                        new_img_url = format_img_url(product_info, img_url)
-                        if new_img_url and new_img_url not in pro_images_front:
-                            replace_list.append(img_url)
-                            pro_images_front.append(new_img_url)
+                try:
+                    for img in soup.find('div', {'class': 'show_gallery'}).find_all('img'):
+                        try:
+                            img_url = img.get('src')
+                            if img_url and not isinstance(img_url, str): continue
+                            new_img_url = format_img_url(product_info, img_url)
+                            if not new_img_url: continue
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith('.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([img_url, new_img_url])
+                        except:
+                            pass
+                except:
+                    pass
 
+                # 替换非产品图片
+                try:
+                    not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
+                    if not_pro_pic_list:
+                        for not_img_url in not_pro_pic_list:
+                            if not_img_url and not isinstance(not_img_url, str): continue
+                            new_img_url = format_img_url(product_info, not_img_url)
+                            if not new_img_url: continue
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            new_img_url = new_img_url.replace("background-image:url(/", "").replace(");", "")
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith(
+                                    '.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([not_img_url, new_img_url])
+                except:
+                    pass
+
+                # 下载
                 if pro_images_front:
-                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+                    pic_return = command_thread(product_info['company_name'], pro_images_front)
+                    if pic_return:
+                        replace_list.extend(pic_return)
+                if pro_video_front:
+                    vid_return = command_thread(product_info['company_name'], pro_video_front)
+                    if vid_return:
+                        replace_list.extend(vid_return)
 
-                # 替换产品图片
+                # 替换
                 if pro_jscs_html and replace_list:
-                    for img_url in replace_list:
-                        if 'zuiyouliao' in img_url: continue
-                        encode_img_url = format_img_url(product_info, img_url)
-                        if not encode_img_url: continue
-
-                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
-                        new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url)
-                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+                    for replace_info in replace_list:
+                        font_url, back_url = replace_info[0],replace_info[2]
+                        pro_jscs_html = pro_jscs_html.replace(font_url,back_url)
+                        if back_url.endswith('.jpg') or back_url.endswith('.png') or back_url.endswith('.pdf') or back_url.endswith('.wbep'):
+                            pro_images_back.append(back_url)
+                        else:
+                            pro_video_back.append(back_url)
             except:
                 pro_images_front = None
                 pro_images_back = None
@@ -99,7 +130,6 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
@@ -109,6 +139,7 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
+    ##
     if product_info['domain'] == "www.njkwls.com":
         try:
             try:
@@ -122,13 +153,6 @@ def parse_detail(product_info, html):
                 series = None
 
             try:
-                pro_desc = soup.find('div', {'class': 'p_content'}).get_text().replace('\n', '').replace('\t',
-                                                                                                         '').replace(
-                    '\r', '').strip()
-            except:
-                pro_desc = None
-
-            try:
                 pro_yyly = None
             except:
                 pro_yyly = None
@@ -136,9 +160,10 @@ def parse_detail(product_info, html):
             try:
                 pro_jscs_html = str(soup.find('div', {'class': 'p_content'}))
             except:
-                pro_jscs_html = None
+                pro_jscs_html = ''
 
             try:
+                urls = []
                 replace_list = []
                 pro_images_front = []
                 pro_images_back = []
@@ -150,18 +175,13 @@ def parse_detail(product_info, html):
                     for img in soup.find('div', {'class': 'p_content'}).find_all('img'):
                         try:
                             img_url = img.get('src')
-                            if not isinstance(img_url, str): continue
-
-                            new_img_url = format_img_url(product_info, img_url.strip())
+                            if img_url and not isinstance(img_url, str): continue
+                            new_img_url = format_img_url(product_info, img_url)
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
-                                        '.pdf') or img_url.endswith('.wbep'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if img_url not in replace_list:
-                                    replace_list.append(img_url)
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith('.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([img_url, new_img_url])
                         except:
                             pass
                 except:
@@ -170,53 +190,39 @@ def parse_detail(product_info, html):
                 # 收集非产品图
                 if pro_jscs_html:
                     not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
-                    if not_pro_pic_list:
-                        for not_img_url in not_pro_pic_list:
-                            not_img_url = not_img_url.strip()
+                    for not_img_url in not_pro_pic_list:
+                        try:
+                            if not_img_url and not isinstance(not_img_url, str): continue
                             new_img_url = format_img_url(product_info, not_img_url)
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if not_img_url.endswith('.jpg') or not_img_url.endswith('.png') or not_img_url.endswith(
-                                        '.pdf') or not_img_url.endswith('.wbep'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if not_img_url not in replace_list:
-                                    replace_list.append(not_img_url)
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            new_img_url = new_img_url.replace("background-image:url(/", "").replace(");", "")
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith(
+                                    '.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([not_img_url, new_img_url])
+                        except:
+                            pass
 
-                ## 下载
+                # 下载
                 if pro_images_front:
-                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+                    pic_return = command_thread(product_info['company_name'], pro_images_front)
+                    if pic_return:
+                        replace_list.extend(pic_return)
                 if pro_video_front:
-                    command_thread(product_info['company_name'], list(set(pro_video_front)), Async=True)
+                    vid_return = command_thread(product_info['company_name'], pro_video_front)
+                    if vid_return:
+                        replace_list.extend(vid_return)
 
                 # 替换
                 if pro_jscs_html and replace_list:
-                    for img_url in replace_list:
-                        img_url = img_url.strip()
-                        encode_img_url = format_img_url(product_info, img_url)
-                        if not encode_img_url: continue
-
-                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
-                        if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith(
-                                '.wmv') or img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith(
-                            '.m4v') or img_url.endswith('.mov'):
-                            hash_mongo = MongoPipeline('video_hash').find_one({'hash_key': hash_key})
-                            if hash_mongo:
-                                new_img_url = hash_mongo.get('video_url_back')
-                                pro_video_back.append(new_img_url)
-                            else:
-                                new_img_url = ''
+                    for replace_info in replace_list:
+                        font_url, back_url = replace_info[0],replace_info[2]
+                        pro_jscs_html = pro_jscs_html.replace(font_url,back_url)
+                        if back_url.endswith('.jpg') or back_url.endswith('.png') or back_url.endswith('.pdf') or back_url.endswith('.wbep'):
+                            pro_images_back.append(back_url)
                         else:
-                            new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                            pro_images_back.append(new_img_url)
-                        if new_img_url:
-                            if f'src=\"{img_url}\"' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-                            elif f'src=\"{encode_img_url}\"' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(encode_img_url, new_img_url)
-                            else:
-                                pass
+                            pro_video_back.append(back_url)
             except:
                 pro_images_front = None
                 pro_images_back = None
@@ -227,7 +233,6 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
@@ -415,6 +420,7 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
+    ##
     if product_info['domain'] == 'www.jmjj.com':
         try:
             try:
@@ -462,46 +468,66 @@ def parse_detail(product_info, html):
                 pro_jscs_html = None
 
             try:
+                urls = []
                 replace_list = []
                 pro_images_front = []
                 pro_images_back = []
+                pro_video_front = []
+                pro_video_back = []
 
                 # 产品图
-                for img in soup.find('section', {'class': 'product_i-bg mb-200 mb-md-20'}).find_all('img'):
-                    try:
-                        img_url = img.get('src')
-                        if not isinstance(img_url, str): continue
+                try:
+                    for img in soup.find('section', {'class': 'product_i-bg mb-200 mb-md-20'}).find_all('img'):
+                        try:
+                            img_url = img.get('src')
+                            if img_url and not isinstance(img_url, str): continue
+                            new_img_url = format_img_url(product_info, img_url)
+                            if not new_img_url: continue
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith('.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([img_url, new_img_url])
+                        except:
+                            pass
+                except:
+                    pass
 
-                        new_img_url = format_img_url(product_info, img_url)
-                        if new_img_url and new_img_url not in pro_images_front:
-                            replace_list.append(img_url)
-                            pro_images_front.append(new_img_url)
-                    except:
-                        pass
+                # 收集非产品图
+                if pro_jscs_html:
+                    not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
+                    for not_img_url in not_pro_pic_list:
+                        try:
+                            if not_img_url and not isinstance(not_img_url, str): continue
+                            new_img_url = format_img_url(product_info, not_img_url)
+                            if not new_img_url: continue
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            new_img_url = new_img_url.replace("background-image:url(/", "").replace(");", "")
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith(
+                                    '.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([not_img_url, new_img_url])
+                        except:
+                            pass
 
-                # 替换非产品图片
-                not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
-                if not_pro_pic_list:
-                    for img_url in not_pro_pic_list:
-                        new_img_url = format_img_url(product_info, img_url)
-                        if new_img_url and new_img_url not in pro_images_front:
-                            replace_list.append(img_url)
-                            pro_images_front.append(new_img_url)
-
+                # 下载
                 if pro_images_front:
-                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+                    pic_return = command_thread(product_info['company_name'], pro_images_front)
+                    if pic_return:
+                        replace_list.extend(pic_return)
+                if pro_video_front:
+                    vid_return = command_thread(product_info['company_name'], pro_video_front)
+                    if vid_return:
+                        replace_list.extend(vid_return)
 
-                # 替换产品图片
+                # 替换
                 if pro_jscs_html and replace_list:
-                    for img_url in replace_list:
-                        if 'zuiyouliao' in img_url: continue
-                        encode_img_url = format_img_url(product_info, img_url)
-                        if not encode_img_url: continue
-
-                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
-                        new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                        pro_images_back.append(new_img_url)
-                        pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
+                    for replace_info in replace_list:
+                        font_url, back_url = replace_info[0],replace_info[2]
+                        pro_jscs_html = pro_jscs_html.replace(font_url,back_url)
+                        if back_url.endswith('.jpg') or back_url.endswith('.png') or back_url.endswith('.pdf') or back_url.endswith('.wbep'):
+                            pro_images_back.append(back_url)
+                        else:
+                            pro_video_back.append(back_url)
             except:
                 pro_images_front = None
                 pro_images_back = None
@@ -521,6 +547,7 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
+    #
     if product_info['domain'] == "faygoplast.cn":
         try:
             try:
@@ -533,10 +560,10 @@ def parse_detail(product_info, html):
             except:
                 series = None
 
-            try:
-                pro_desc = soup.find('div', {'class': 'fusion-text'}).find('p').get_text().strip()
-            except:
-                pro_desc = None
+            # try:
+            #     pro_desc = soup.find('div', {'class': 'fusion-text'}).find('p').get_text().strip()
+            # except:
+            #     pro_desc = None
 
             try:
                 pro_yyly = None
@@ -545,6 +572,9 @@ def parse_detail(product_info, html):
 
             try:
                 pro_jscs_html = []
+                pro_desc = soup.find('div', {'class': 'fusion-text'}).find('p')
+                if pro_desc:
+                    pro_jscs_html.append(str(pro_desc))
                 for p in soup.find('div', {'class': 'tab-pane fade fusion-clearfix in active'}).find_all('p'):
                     pro_jscs_html.append(str(p))
                 if pro_jscs_html:
@@ -553,6 +583,7 @@ def parse_detail(product_info, html):
                 pro_jscs_html = None
 
             try:
+                urls = []
                 replace_list = []
                 pro_images_front = []
                 pro_images_back = []
@@ -564,18 +595,14 @@ def parse_detail(product_info, html):
                     for img in soup.find('div', {'class': 'fusion-builder-row fusion-row'}).find_all('img'):
                         try:
                             img_url = img.get('src')
-                            if not isinstance(img_url, str): continue
-
-                            new_img_url = format_img_url(product_info, img_url.strip())
+                            if img_url and not isinstance(img_url, str): continue
+                            new_img_url = format_img_url(product_info, img_url)
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
-                                        '.pdf') or img_url.endswith('.wbep'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if img_url not in replace_list:
-                                    replace_list.append(img_url)
+                            if new_img_url in urls:
+                                continue
+                            else:urls.append(new_img_url)
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith('.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([img_url, new_img_url])
                         except:
                             pass
                 except:
@@ -588,18 +615,16 @@ def parse_detail(product_info, html):
                         for img in videos:
                             try:
                                 img_url = f'https://dpv.videocc.net/{img[:10]}/b/{img}_3.mp4'
-                                if not isinstance(img_url, str): continue
-
+                                if img_url and not isinstance(img_url, str): continue
                                 new_img_url = format_img_url(product_info, img_url.strip())
                                 if not new_img_url: continue
-                                if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                    if img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
-                                            '.pdf') or img_url.endswith('.wbep'):
-                                        pro_images_front.append(new_img_url)
-                                    else:
-                                        pro_video_front.append(new_img_url)
-                                    if img_url not in replace_list:
-                                        replace_list.append(img_url)
+                                if new_img_url in urls: continue
+                                else:
+                                    urls.append(new_img_url)
+                                if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith(
+                                        '.wmv') or img_url.endswith('.mpeg') or img_url.endswith(
+                                        '.flv') or img_url.endswith('.m4v') or img_url.endswith('.mov'):
+                                    pro_video_front.append([img_url, new_img_url])
                             except:
                                 pass
                 except:
@@ -608,53 +633,39 @@ def parse_detail(product_info, html):
                 # 收集非产品图
                 if pro_jscs_html:
                     not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
-                    if not_pro_pic_list:
-                        for not_img_url in not_pro_pic_list:
-                            not_img_url = not_img_url.strip()
+                    for not_img_url in not_pro_pic_list:
+                        try:
+                            if not_img_url and not isinstance(not_img_url, str): continue
                             new_img_url = format_img_url(product_info, not_img_url)
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if not_img_url.endswith('.jpg') or not_img_url.endswith('.png') or not_img_url.endswith(
-                                        '.pdf') or not_img_url.endswith('.wbep'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if not_img_url not in replace_list:
-                                    replace_list.append(not_img_url)
+                            if new_img_url in urls:continue
+                            else:urls.append(new_img_url)
+                            new_img_url = new_img_url.replace("background-image:url(/", "").replace(");", "")
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith(
+                                    '.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([not_img_url, new_img_url])
+                        except:
+                            pass
 
-                ## 下载
+                # 下载
                 if pro_images_front:
-                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+                    pic_return = command_thread(product_info['company_name'], pro_images_front)
+                    if pic_return:
+                        replace_list.extend(pic_return)
                 if pro_video_front:
-                    command_thread(product_info['company_name'], list(set(pro_video_front)), Async=True)
+                    vid_return = command_thread(product_info['company_name'], pro_video_front)
+                    if vid_return:
+                        replace_list.extend(vid_return)
 
                 # 替换
                 if pro_jscs_html and replace_list:
-                    for img_url in replace_list:
-                        img_url = img_url.strip()
-                        encode_img_url = format_img_url(product_info, img_url)
-                        if not encode_img_url: continue
-
-                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
-                        if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith(
-                                '.wmv') or img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith(
-                            '.m4v') or img_url.endswith('.mov'):
-                            hash_mongo = MongoPipeline('video_hash').find_one({'hash_key': hash_key})
-                            if hash_mongo:
-                                new_img_url = hash_mongo.get('video_url_back')
-                                pro_video_back.append(new_img_url)
-                            else:
-                                new_img_url = ''
+                    for replace_info in replace_list:
+                        font_url, back_url = replace_info[0],replace_info[2]
+                        if back_url.endswith('.jpg') or back_url.endswith('.png') or back_url.endswith('.pdf') or back_url.endswith('.wbep'):
+                            pro_images_back.append(back_url)
                         else:
-                            new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                            pro_images_back.append(new_img_url)
-                        if new_img_url:
-                            if f'src=\"{img_url}\"' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-                            elif f'src=\"{encode_img_url}\"' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(encode_img_url, new_img_url)
-                            else:
-                                pass
+                            pro_video_back.append(back_url)
+                        pro_jscs_html = pro_jscs_html.replace(font_url,back_url)
             except:
                 pro_images_front = None
                 pro_images_back = None
@@ -667,7 +678,7 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
+                # 'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
@@ -1451,7 +1462,6 @@ def parse_detail(product_info, html):
                 return _data
         except Exception as error:
             log_err(error)
-    # useon 数据问题
     if product_info['domain'] == "www.useon.cn":
         try:
             try:
@@ -1605,7 +1615,6 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
-    # huabaosuliaojixie 数据问题
     if product_info['domain'] == "www.huabaosuliaojixie.com":
         try:
             try:
@@ -2652,6 +2661,7 @@ def parse_detail(product_info, html):
             return _data
         except Exception as error:
             log_err(error)
+    ##
     if product_info['domain'] == "www.yizumi.com":
         try:
             try:
@@ -2666,8 +2676,7 @@ def parse_detail(product_info, html):
 
             try:
                 pro_yyly = soup.find('div', {'class': 'caste_2-con2'}).find('h5')
-                if '适用于' in str(pro_yyly):
-                    pro_yyly = pro_yyly.get_text().strip()
+                pro_yyly = pro_yyly.get_text().strip()
             except:
                 pro_yyly = None
 
@@ -2693,6 +2702,7 @@ def parse_detail(product_info, html):
                 pro_jscs_html = None
 
             try:
+                urls = []
                 replace_list = []
                 pro_images_front = []
                 pro_images_back = []
@@ -2701,44 +2711,33 @@ def parse_detail(product_info, html):
 
                 # 收集产品图
                 try:
-                    imgs = re.findall('style="background: url\((.*?)\)', html, re.S)
-                    for img in imgs:
+                    imgs = re.findall('style="background: url\((.*?)\)', str(soup.find('div', {'class': 'caste-ban2'})), re.S)
+                    for img_url in imgs:
                         try:
-                            img_url = img
-                            if not isinstance(img_url, str): continue
-                            if not img_url: continue
-                            if '.jpg' not in img_url: continue
+                            if img_url and not isinstance(img_url, str): continue
                             new_img_url = format_img_url(product_info, img_url)
-                            new_img_url = new_img_url.replace("background-image:url(", "").replace(");", "")
-                            if new_img_url not in pro_images_front:
-                                if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith('.pdf') or new_img_url.endswith('.wbep'):
-
-                                    pro_images_front.append(new_img_url)
-                                if img_url not in replace_list:
-                                    replace_list.append(img_url)
+                            if not new_img_url: continue
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith('.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([img_url, new_img_url])
                         except:
                             pass
                 except:
                     pass
 
-                # # 收集产品视频
+                # 收集产品视频
                 try:
-                    for img in soup.find('div', {'class': 'vidbox'}).find_all('video'):
-                        print(img)
+                    for video in soup.find('div', {'class': 'caste-ban2'}).find_all('video'):
                         try:
-                            img_url = img.get('src')
-                            if not isinstance(img_url, str): continue
-
+                            img_url = video.find('source').get('src')
+                            if img_url and not isinstance(img_url, str): continue
                             new_img_url = format_img_url(product_info, img_url.strip())
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
-                                        '.pdf') or img_url.endswith('.wbep'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if img_url not in replace_list:
-                                    replace_list.append(img_url)
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith('.wmv') or img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith('.m4v') or img_url.endswith('.mov'):
+                                pro_video_front.append([img_url, new_img_url])
                         except:
                             pass
                 except:
@@ -2749,51 +2748,38 @@ def parse_detail(product_info, html):
                     not_pro_pic_list = re.findall('style=\"(.*?)\"', pro_jscs_html, re.S)
                     if not_pro_pic_list:
                         for not_img_url in not_pro_pic_list:
-                            not_img_url = not_img_url.strip()
-                            if not isinstance(not_img_url, str): continue
-                            if not not_img_url: continue
-                            if '.jpg' not in not_img_url: continue
-                            new_img_url = format_img_url(product_info, not_img_url)
-                            new_img_url = new_img_url.replace("background-image:url(/", "").replace(");", "")
-                            if new_img_url not in pro_images_front:
-                                pro_images_front.append(new_img_url)
-                            if not_img_url not in replace_list:
-                                replace_list.append(not_img_url)
+                            try:
+                                not_img_url = not_img_url.strip()
+                                if not_img_url and not isinstance(not_img_url, str): continue
+                                new_img_url = format_img_url(product_info, not_img_url)
+                                if not new_img_url: continue
+                                if new_img_url in urls: continue
+                                else: urls.append(new_img_url)
+                                new_img_url = new_img_url.replace("background-image:url(/", "").replace(");", "")
+                                if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith('.pdf') or new_img_url.endswith('.wbep'):
+                                    pro_images_front.append([not_img_url, new_img_url])
+                            except:
+                                pass
 
-                ## 下载
+                # 下载
                 if pro_images_front:
-                    command_thread(product_info['company_name'], list(set(pro_images_front)), Async=True)
+                    pic_return = command_thread(product_info['company_name'], pro_images_front)
+                    if pic_return:
+                        replace_list.extend(pic_return)
                 if pro_video_front:
-                    command_thread(product_info['company_name'], list(set(pro_video_front)), Async=True)
+                    vid_return = command_thread(product_info['company_name'], pro_video_front)
+                    if vid_return:
+                        replace_list.extend(vid_return)
 
                 # 替换
                 if pro_jscs_html and replace_list:
-                    for img_url in replace_list:
-                        img_url = img_url.strip()
-                        encode_img_url = format_img_url(product_info, img_url)
-                        encode_img_url = encode_img_url.replace("background-image:url(", "").replace(");", "")
-                        print(img_url, encode_img_url)
-                        if not encode_img_url: continue
-                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
-                        if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith(
-                                '.wmv') or img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith(
-                            '.m4v') or img_url.endswith('.mov'):
-                            hash_mongo = MongoPipeline('video_hash').find_one({'hash_key': hash_key})
-                            if hash_mongo:
-                                new_img_url = hash_mongo.get('video_url_back')
-                                pro_video_back.append(new_img_url)
-                            else:
-                                new_img_url = ''
+                    for replace_info in replace_list:
+                        font_url, back_url = replace_info[0],replace_info[2]
+                        pro_jscs_html = pro_jscs_html.replace(f'<div class="caste_2-img-2" style="{font_url}">', f'<img class="img" src="{back_url}">')
+                        if back_url.endswith('.jpg') or back_url.endswith('.png') or back_url.endswith('.pdf') or back_url.endswith('.wbep'):
+                            pro_images_back.append(back_url)
                         else:
-                            new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                            pro_images_back.append(new_img_url)
-                        if new_img_url:
-                            if f'style=\"{img_url}\");' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-                            elif f'style=\"{encode_img_url}\");' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(encode_img_url, new_img_url)
-                            else:
-                                pass
+                            pro_video_back.append(back_url)
             except:
                 pro_images_front = None
                 pro_images_back = None
@@ -3128,10 +3114,10 @@ def parse_detail(product_info, html):
             except:
                 series = None
 
-            try:
-                pro_desc = soup.find('div', {'class': 'cbox-19-0 p_item'}).find('p').get_text().strip()
-            except:
-                pro_desc = None
+            # try:
+            #     pro_desc = soup.find('div', {'class': 'cbox-19-0 p_item'}).find('p').get_text().strip()
+            # except:
+            #     pro_desc = None
 
             try:
                 pro_yyly = None
@@ -3139,11 +3125,20 @@ def parse_detail(product_info, html):
                 pro_yyly = None
 
             try:
-                pro_jscs_html = str(soup.find_all('div', {'class': 'p_infoItem'})[-1])
+                pro_jscs_html = []
+                pro_desc = soup.find('div', {'class': 'cbox-19-0 p_item'}).find('p')
+                if pro_desc:
+                    pro_jscs_html.append(str(pro_desc))
+                pro_detail= soup.find_all('div', {'class': 'p_infoItem'})[-1]
+                if pro_detail:
+                    pro_jscs_html.append(str(pro_detail))
+                if pro_jscs_html:
+                    pro_jscs_html = '\n'.join(pro_jscs_html)
             except:
                 pro_jscs_html = None
 
             try:
+                urls = []
                 replace_list = []
                 pro_images_front = []
                 pro_images_back = []
@@ -3155,19 +3150,15 @@ def parse_detail(product_info, html):
                     for img in soup.find('div', {'id': 'magnifierWrapper'}).find_all('img'):
                         try:
                             img_url = img.get('src')
-                            if not isinstance(img_url, str): continue
-                            if '/image' not in img_url: continue
-
-                            new_img_url = format_img_url(product_info, img_url.strip())
+                            if img_url and not isinstance(img_url, str): continue
+                            new_img_url = format_img_url(product_info, img_url)
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
-                                        '.pdf') or img_url.endswith('.wbep'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if img_url not in replace_list:
-                                    replace_list.append(img_url)
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if 'img/s.png' in new_img_url: continue
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith(
+                                    '.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([img_url, new_img_url])
                         except:
                             pass
                 except:
@@ -3178,78 +3169,56 @@ def parse_detail(product_info, html):
                     for img in soup.find('div', {'class': 'ckeditor-html5-video'}).find_all('video'):
                         try:
                             img_url = img.get('src')
-                            print(img_url)
-                            if not str(img_url).endswith('.pdf') and not str(img_url).endswith('.PDF'):
-                                img_url += quote(img.get_text().replace('\n', '').replace('\t', '').replace('\r', '').strip())
-                            if not isinstance(img_url, str): continue
-                            if str(img_url).endswith('.PDF'):
-                                img_url = img_url.split('.PDF')[0] + '.pdf'
-                            print(img_url)
+                            if img_url and not isinstance(img_url, str): continue
                             new_img_url = format_img_url(product_info, img_url.strip())
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if img_url.endswith('.jpg') or img_url.endswith('.png') or img_url.endswith(
-                                        '.pdf') or img_url.endswith('.wbep') or img_url.endswith('.PDF'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if img_url not in replace_list:
-                                    replace_list.append(img_url)
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if 'img/s.png' in new_img_url: continue
+                            if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith('.wmv') or img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith('.m4v') or img_url.endswith('.mov'):
+                                pro_video_front.append([img_url, new_img_url])
                         except:
                             pass
                 except:
                     pass
 
-                # 收集非产品图
-                if pro_jscs_html:
+                # 替换非产品图片
+                try:
                     not_pro_pic_list = re.findall('src=\"(.*?)\"', pro_jscs_html, re.S)
                     if not_pro_pic_list:
                         for not_img_url in not_pro_pic_list:
-                            not_img_url = not_img_url.strip()
+                            if not_img_url and not isinstance(not_img_url, str): continue
                             new_img_url = format_img_url(product_info, not_img_url)
                             if not new_img_url: continue
-                            if new_img_url not in pro_images_front and new_img_url not in pro_video_front:
-                                if not_img_url.endswith('.jpg') or not_img_url.endswith('.png') or not_img_url.endswith(
-                                        '.pdf') or not_img_url.endswith('.wbep'):
-                                    pro_images_front.append(new_img_url)
-                                else:
-                                    pro_video_front.append(new_img_url)
-                                if not_img_url not in replace_list:
-                                    replace_list.append(not_img_url)
+                            if new_img_url in urls: continue
+                            else: urls.append(new_img_url)
+                            if 'img/s.png' in new_img_url: continue
+                            new_img_url = new_img_url.replace("background-image:url(/", "").replace(");", "")
+                            if new_img_url.endswith('.jpg') or new_img_url.endswith('.png') or new_img_url.endswith(
+                                    '.pdf') or new_img_url.endswith('.wbep'):
+                                pro_images_front.append([not_img_url, new_img_url])
+                except:
+                    pass
 
-                ## 下载
+                # 下载
                 if pro_images_front:
-                    command_thread(product_info['company_name'], list(set(pro_images_front)))
+                    pic_return = command_thread(product_info['company_name'], pro_images_front)
+                    if pic_return:
+                        replace_list.extend(pic_return)
                 if pro_video_front:
-                    command_thread(product_info['company_name'], list(set(pro_video_front)))
+                    vid_return = command_thread(product_info['company_name'], pro_video_front)
+                    if vid_return:
+                        replace_list.extend(vid_return)
 
                 # 替换
                 if pro_jscs_html and replace_list:
-                    for img_url in replace_list:
-                        img_url = img_url.strip()
-                        encode_img_url = format_img_url(product_info, img_url)
-                        if not encode_img_url: continue
-
-                        hash_key = hashlib.md5(encode_img_url.encode("utf8")).hexdigest()
-                        if img_url and img_url.endswith('.mp4') or img_url.endswith('.avi') or img_url.endswith(
-                                '.wmv') or img_url.endswith('.mpeg') or img_url.endswith('.flv') or img_url.endswith(
-                            '.m4v') or img_url.endswith('.mov'):
-                            hash_mongo = MongoPipeline('video_hash').find_one({'hash_key': hash_key})
-                            if hash_mongo:
-                                new_img_url = hash_mongo.get('video_url_back')
-                                pro_video_back.append(new_img_url)
-                            else:
-                                new_img_url = ''
+                    for replace_info in replace_list:
+                        font_url, back_url = replace_info[0],replace_info[2]
+                        pro_jscs_html = pro_jscs_html.replace(font_url,back_url)
+                        if back_url.endswith('.jpg') or back_url.endswith('.png') or back_url.endswith('.pdf') or back_url.endswith('.wbep'):
+                            pro_images_back.append(back_url)
                         else:
-                            new_img_url = serverUrl + hash_key + '.' + img_url.split('.')[-1]
-                            pro_images_back.append(new_img_url)
-                        if new_img_url:
-                            if f'src=\"{img_url}\"' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(img_url, new_img_url)
-                            elif f'src=\"{encode_img_url}\"' in pro_jscs_html:
-                                pro_jscs_html = pro_jscs_html.replace(encode_img_url, new_img_url)
-                            else:
-                                pass
+                            pro_video_back.append(back_url)
             except:
                 pro_images_front = None
                 pro_images_back = None
@@ -3262,7 +3231,7 @@ def parse_detail(product_info, html):
                 'pro_link': product_info['pro_link'],
                 'pro_name': product_info['pro_name'],
                 'series': series,
-                'pro_desc': pro_desc,
+                # 'pro_desc': pro_desc,
                 'pro_yyly': pro_yyly,
                 'pro_jscs_html': pro_jscs_html,
                 'pro_images_front': pro_images_front,
