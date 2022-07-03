@@ -1,0 +1,2 @@
+[ERROR] 2022-07-03 20:23:33 [parse_detail] local variable 'pro_desc' referenced before assignment D:\Projects\zyl_company\spiders\product_detail.py:1602
+[ERROR] 2022-07-03 20:23:33 [product_detail] 'NoneType' object has no attribute 'get' D:\Projects\zyl_company\main.py:104
