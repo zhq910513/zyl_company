@@ -86,8 +86,8 @@ def file_parse_detail(product_info, html):
                             img_url = a.get('href')
                             new_img_url = 'http://www.topstarltd.com/' + img_url
                             if not new_img_url: continue
-                            if not str(new_img_url).endswith('.zip'): continue
-                            pro_file_front.append([file_name, new_img_url, img_url])
+                            if str(new_img_url).endswith('.zip'):
+                                pro_file_front.append([file_name, new_img_url, img_url])
                         except:
                             pass
                 except:
@@ -119,6 +119,6 @@ def file_parse_detail(product_info, html):
 
 
 if __name__ == "__main__":
-    for pi in MongoPipeline("products").find({"company_name" : "广东拓斯达科技股份有限公司"}).skip(1):
+    for pi in MongoPipeline("products").find({"company_name" : "广东拓斯达科技股份有限公司"}):
         product_detail(pi)
-        # break
+        break
